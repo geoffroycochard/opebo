@@ -4,4 +4,10 @@ app:
     en: English
     es: Spanish
     cn: Chinese
+  objective:
+    acc: 'Accomodation'
+    adm: 'Administrative support'
+    exc: 'Friendly exchange'
+    hfi: 'Help finding internship'
+    hfj: 'Help finding job'
     

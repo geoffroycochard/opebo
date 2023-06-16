@@ -4,4 +4,10 @@ app:
     en: Anglais
     es: Espagnol
     cn: Chinois
-    
+  objective:
+    acc: 'Hébergement'
+    adm: 'Accompagnement administratif'
+    exc: 'Echange convivial'
+    hfi: 'Aide à la recherche un stage'
+    hfj: 'Aide à la recherche un job'
+

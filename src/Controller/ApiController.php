@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Config\Language;
+use App\Config\Objective;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,6 +33,25 @@ class ApiController extends AbstractController
         foreach (Language::cases() as $language) {
             $data[$language->value] = $translator->trans(
                 $language->title(),
+                [],
+                null,
+                $locale 
+            );
+        }
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/api/objective/{locale}', 
+        name: 'app_api_objective', 
+        requirements: ['local' => 'fr|en']
+    )]
+    public function objective($locale, TranslatorInterface $translator): ?Response
+    {        
+        $data = [];
+        foreach (Objective::cases() as $objective) {
+            $data[$objective->value] = $translator->trans(
+                $objective->title(),
                 [],
                 null,
                 $locale 
