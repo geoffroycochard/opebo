@@ -41,4 +41,8 @@ final class UserApi  implements UserInterface
     public function getUserIdentifier(): string {
         return 'apiuser';
     }
+    public function supportsClass($class)
+    {
+        return $class === UserApi::class;
+    }
 }
