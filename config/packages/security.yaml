@@ -5,9 +5,12 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
-        users_api:
-            entity:
-                class: App\Model\UserApi
+        # users_api:
+        #     entity:
+        #         class: App\Model\UserApi
+        # used to reload user from session & other features (e.g. switch_user)
+        api_user:
+            id: App\Security\UserApiProvider
 
     firewalls:
         dev:
@@ -16,6 +19,7 @@ security:
         api:
             pattern: ^/api
             security: true
+            provider: api_user
             custom_authenticators:
                 - App\Security\ApiKeyAuthenticator
         main:
