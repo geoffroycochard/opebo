@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Config\Language;
 use App\Config\Objective;
+use App\Entity\Domain;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -57,6 +59,23 @@ class ApiController extends AbstractController
                 $locale 
             );
         }
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/api/l', 
+        name: 'app_api_l'
+    )]
+    public function l(ManagerRegistry $managerRegistry): ?Response
+    {  
+        $data = [];
+
+        $domains = ($managerRegistry->getRepository(Domain::class));
+
+        $values = array_map(function ($value) {
+            return $value->getName();
+        },$domains->findAll());
+        dd($values);
         return new JsonResponse($data, Response::HTTP_OK);
     }
 }

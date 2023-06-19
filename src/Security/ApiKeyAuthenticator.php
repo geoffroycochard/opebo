@@ -28,7 +28,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
         #TODO // TEMP TO TEST
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         $apiToken = '123456789';
-        return new SelfValidatingPassport(new UserBadge($apiToken, fn() => new User()));
+        return new SelfValidatingPassport(new UserBadge($apiToken, fn() => new UserApi()));
 
         if (null === $apiToken) {
             // The token header was empty, authentication fails with HTTP Status
