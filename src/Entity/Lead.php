@@ -15,7 +15,7 @@ use App\Repository\LeadRepository;
 #[ORM\InheritanceType('SINGLE_TABLE')]
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\DiscriminatorMap(['proposal' => Proposal::class, 'request' => Request::class])]
-class Lead
+abstract class Lead
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
