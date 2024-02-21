@@ -1,0 +1,12 @@
+{# templates/emails/signup.html.twig #}
+<h1>Bonjour {{ student.firstname }}!</h1>
+
+<p>
+    Votre demande d'accompagnement par {{ sponsor.firstname }} a été validé.
+</p>
+<p>
+    <a href="{{ url('app_frontend_dashboard', {
+        person: student.id
+    }) }}">Je visite l'état de mon sponsoring</a>
+</p>
+</p>

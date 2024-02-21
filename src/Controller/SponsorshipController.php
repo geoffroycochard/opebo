@@ -2,26 +2,24 @@
 
 namespace App\Controller;
 
+use App\Entity\Sponsorship;
 use App\Repository\SponsorshipRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\SponsorshipManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+#[Route('/sponsorship')]
 class SponsorshipController extends AbstractController
 {
-    #[Route('/sponsorship', name: 'app_sponsorship')]
-    public function index(SponsorshipRepository $sponsorshipRepository): Response
+    #[Route('/show/{sponsorship}', name: 'app_sponsorship_show')]
+    public function show(
+        Sponsorship $sponsorship,
+        SponsorshipManager $sponsorshipManager
+    ): Response
     {
-        $requestId = 28;
-
-        $sponsorships = $sponsorshipRepository->findBy(
-            ['request' => $requestId],
-            ['score' => 'DESC']
-        );
-
-        return $this->render('sponsorship/index.html.twig', [
-            'sponsorships' => $sponsorships,
-            'requestId' => $requestId
+        return $this->render('sponsorship/show.html.twig', [
+            'sponsorship' => $sponsorship
         ]);
     }
 }

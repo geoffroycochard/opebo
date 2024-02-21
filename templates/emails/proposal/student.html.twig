@@ -1,0 +1,20 @@
+{# templates/emails/signup.html.twig #}
+<h1>Bonjour {{ student.firstname }}!</h1>
+
+<p>
+    Une proposition : {{ sponsor.id }}
+</p>
+
+
+<p>
+    <a href="{{ url('app_frontend_sponsorship_back', {
+        sponsorship: sponsorship.id,
+        lead: sponsorship.request.id,
+        transition: 'to_st_validate'
+    }) }}">Pour accepter</a><br />
+    <a href="{{ url('app_frontend_sponsorship_back', {
+        sponsorship: sponsorship.id,
+        lead: sponsorship.request.id,
+        transition: 'to_st_rejected'
+    }) }}">Pour refuser</a><br />
+</p>

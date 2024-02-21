@@ -5,7 +5,9 @@ namespace App\Entity;
 use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PersonRepository::class)]
 #[ORM\InheritanceType('SINGLE_TABLE')]
@@ -41,6 +43,14 @@ abstract class Person
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Lead::class)]
     private Collection $leads;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\Email]
+    #[Assert\Unique]
+    private ?string $email = null;
+
+    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $birthdate = null;
 
     public function __construct()
     {
@@ -162,6 +172,30 @@ abstract class Person
                 $lead->setPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getBirthdate(): ?\DateTimeInterface
+    {
+        return $this->birthdate;
+    }
+
+    public function setBirthdate(?\DateTimeInterface $birthdate): static
+    {
+        $this->birthdate = $birthdate;
 
         return $this;
     }

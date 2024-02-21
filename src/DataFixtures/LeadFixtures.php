@@ -49,6 +49,7 @@ class LeadFixtures extends Fixture implements DependentFixtureInterface
                     ->setGender($this->rand(Gender::cases(), 1))
                     ->setPerson($person)
                     ->setDomains($domains)
+                    ->setStatus('free')
                 ;
                 $manager->persist($request);
             }   

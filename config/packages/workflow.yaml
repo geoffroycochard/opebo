@@ -1,0 +1,101 @@
+framework:
+    workflows:
+        sponsorship:
+            type: 'workflow'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Sponsorship
+            initial_marking: initialized
+            places:
+                - initialized
+                - student_proposed
+                - sponsor_proposed
+                - student_approved
+                - sponsor_approved  
+                - student_rejected
+                - sponsor_rejected
+                - student_contacted
+                - sponsor_contacted
+                - student_in_progress
+                - sponsor_in_progress
+                - ended
+
+            transitions:
+                to_proposed:
+                    from: initialized
+                    to: [student_proposed,sponsor_proposed]
+
+                to_st_validate: # L'etudiant accepte la proposition de matching
+                    from: student_proposed
+                    to: student_approved
+                to_sp_validate: # Le sponsor accepte la proposition de matching
+                    from: sponsor_proposed
+                    to: sponsor_approved
+
+                to_st_rejected: # L'un des parti refuse la proposition de matching
+                    from: [student_proposed,student_approved]
+                    to: student_rejected
+                to_sp_rejected:
+                    from: [sponsor_proposed,sponsor_approved]
+                    to: sponsor_rejected
+
+                to_st_contacted: # Les deux partis ont pris contact
+                    from: student_approved
+                    to: student_contacted
+                to_sp_contacted: # Les deux partis ont pris contact
+                    from: sponsor_approved
+                    to: sponsor_contacted
+
+                to_st_in_progress: # Les deux partis ont pris contact
+                    from: student_contacted
+                    to: student_in_progress
+                to_sp_in_progress: # Les deux partis ont pris contact
+                    from: sponsor_contacted
+                    to: sponsor_in_progress
+
+                to_st_ended: # L'un des parti souhaite arrêter le parrainnage
+                    from: student_in_progress
+                    to: ended
+                to_sp_ended: # L'un des parti souhaite arrêter le parrainnage
+                    from: sponsor_in_progress
+                    to: ended
+
+#                st_end: # L'un des parti souhaite arrêter le parrainnage
+#                    from: sponsorship
+#                    to: st_ended
+#                sp_end: # L'un des parti souhaite arrêter le parrainnage
+#                    from: sponsorship
+#                    to: sp_ended
+
+        lead:
+            type: 'state_machine'
+            marking_store:
+                type: 'method'
+                property: 'status'
+            supports:
+                - App\Entity\Lead
+            initial_marking: free
+            places:
+                - free
+                - blocked
+                - proposed
+                - sponsorized
+                - archived
+            transitions:
+                to_blocked:
+                    from: free
+                    to: blocked
+                to_free:
+                    from: [blocked, proposed, archived]
+                    to: free
+                to_proposed:
+                    from: blocked
+                    to: proposed
+                to_sponsoring:
+                    from: proposed
+                    to: sponsorized
+                to_archived:
+                    from: sponsorized
+                    to: archived

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\SponsorshipRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: SponsorshipRepository::class)]
@@ -26,6 +27,9 @@ class Sponsorship
     #[ORM\ManyToOne(inversedBy: 'sponsorships')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Proposal $proposal = null;
+
+    #[ORM\Column(type: Types::JSON, nullable: true)]
+    private array $status = [];
 
     public function getId(): ?int
     {
@@ -79,4 +83,17 @@ class Sponsorship
 
         return $this;
     }
+
+    public function getStatus(): array
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?array $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
 }

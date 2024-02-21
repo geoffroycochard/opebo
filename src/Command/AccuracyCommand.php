@@ -3,18 +3,21 @@
 namespace App\Command;
 
 use App\Entity\Sponsorship;
-use App\Repository\ProposalRepository;
-use App\Repository\RequestRepository;
-use App\Repository\SponsorshipRepository;
 use Doctrine\ORM\EntityManager;
+use App\Repository\RequestRepository;
+use App\Repository\ProposalRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SponsorshipRepository;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
+
 
 #[AsCommand(
     name: 'app:accuracy',
@@ -27,7 +30,11 @@ class AccuracyCommand extends Command
         private RequestRepository $requestRepository,
         private ProposalRepository $proposalRepository,
         private SponsorshipRepository $sponsorshipRepository,
-        private EntityManagerInterface $entityManagerInterface
+        private EntityManagerInterface $entityManagerInterface,
+        #[Target('sponsorship')]
+        private WorkflowInterface $sponsorshipWorkflow,
+        #[Target('lead')]
+        private WorkflowInterface $leadWorkflow
     )
     {
         parent::__construct();
@@ -45,55 +52,11 @@ class AccuracyCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $requestId = $input->getArgument('request');
 
-        // $dataset = [
-        //     'person 1' => [
-        //         'gender' => ['male'],
-        //         'language' => ['fr'], 
-        //         'domain' => ['vente','marketing'],
-        //         'objective' => ['hébergement']
-        //     ],
-        //     'person 2' => [
-        //         'gender' => ['female'],
-        //         'language' => ['fr','cn'], 
-        //         'domain' => ['numérique','marketing'], 
-        //         'objective' => ['hébergement']
-        //     ],
-        //     'person 3' => [
-        //         'gender' => ['male'],
-        //         'language' => ['fr'], 
-        //         'domain' => ['vente','mécanique'], 
-        //         'objective' => ['hébergement']
-        //     ],
-        //     'person 4' => [
-        //         'gender' => ['male'],
-        //         'language' => ['fr'], 
-        //         'domain' => ['mécanique','marketing'], 
-        //         'objective' => ['hébergement']
-        //     ],
-        //     'person 5' => [
-        //         'gender' => ['female'],
-        //         'language' => ['fr','cn'], 
-        //         'domain' => ['mécanique', 'numérique', 'digital'], 
-        //         'objective' => ['convivial']
-        //     ],
-        //     'person 6' => [
-        //         'gender' => ['female'],
-        //         'language' => ['fr','en'], 
-        //         'domain' => ['mécanique','marketing'], 
-        //         'objective' => ['hébergement']
-        //     ],
-        // ];
-
-        // $search = [
-        //     'gender' => ['female'],
-        //     'language' => ['fr','cn'], 
-        //     'domain' => ['mécanique','marketing'], 
-        //     'objective' => ['convivial']
-        // ];
-
         $dataset = [];
         # TODO : check if available (status)
-        foreach ($this->proposalRepository->findAll() as $proposal) {
+        foreach ($this->proposalRepository->findBy([
+            'status' => 'free'
+        ]) as $proposal) {
             $d = [
                 'gender' => array_map(function($gender) { 
                     return $gender->value; }, $proposal->getGender()
@@ -108,6 +71,7 @@ class AccuracyCommand extends Command
                 ),
             ];
             $dataset[$proposal->getId()] = $d;
+            $this->leadWorkflow->apply($proposal, 'to_blocked');
         }
         
         $request = $this->requestRepository->find($requestId);
@@ -124,13 +88,14 @@ class AccuracyCommand extends Command
                 return $objective->value; }, $request->getObjective()
             ),
         ];
+        $this->leadWorkflow->apply($request, 'to_blocked');
 
         /** Depend Objective parameter */
         $kpis = [
             'gender' => 100,
             'language' => 10, 
             'domain' => 30, 
-            'objective' => 50
+            'objective' => 100
         ];
 
         $score = [];
@@ -143,13 +108,16 @@ class AccuracyCommand extends Command
                 $resume[$kpi] = $s;
             }
             $score[$proposalId] = $s / count($kpis);
-            $sponsoship = (new Sponsorship())
+
+            $initialPlace = $this->sponsorshipWorkflow->getDefinition()->getInitialPlaces();
+            $sponsorship = (new Sponsorship())
                 ->setScore($s)
                 ->setResume($resume)
                 ->setProposal($this->proposalRepository->find($proposalId))
                 ->setRequest($request)
+                ->setStatus(array_flip($initialPlace))
             ;
-            $this->entityManagerInterface->persist($sponsoship);
+            $this->entityManagerInterface->persist($sponsorship);
         }
         $this->entityManagerInterface->flush();
 

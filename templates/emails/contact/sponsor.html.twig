@@ -1,0 +1,22 @@
+{# templates/emails/signup.html.twig #}
+<h1>Bonjour {{ sponsor.firstname }}!</h1>
+
+<p>
+    Une proposition de contact avev {{ student.firstname }} afin de finaliser votre sponsor : 
+</p>
+<p>
+    email : {{ student.email }} / phone : {{ student.phone }}
+</p>
+<p>
+    <a href="{{ url('app_frontend_sponsorship_back', {
+        sponsorship: sponsorship.id,
+        lead: sponsorship.proposal.id,
+        transition: 'to_sp_concluded'
+    }) }}">J'ai contacté et j'accepte</a><br />
+    <a href="{{ url('app_frontend_sponsorship_back', {
+        sponsorship: sponsorship.id,
+        lead: sponsorship.proposal.id,
+        transition: 'to_sp_rejected'
+    }) }}">J'ai contacté et je refuse</a><br />
+</p>
+</p>

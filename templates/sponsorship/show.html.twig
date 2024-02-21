@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Student{% endblock %}
+
+{% block body %}
+
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-12">
+            <!-- Page header -->
+            <div class="border-bottom pb-4 mb-4 ">
+                <h3 class="mb-0 fw-bold">Sponsorship</h3>
+            </div>
+          </div>
+        </div>
+    </div>
+
+
+    <div class="py-6">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12 col-md-12 col-12 mb-6">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <th>Id</th>
+                                    <td>{{ sponsorship.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        {# Or loop through the enabled transitions #}
+                                        {% for transition,k in sponsorship.status %}
+                                            {{ transition }}
+                                        {% else %}
+                                            No actions available.
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Request</th>
+                                    <td>{{ sponsorship.request.id }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Proposal</th>
+                                    <td>{{ sponsorship.proposal.id }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <a href="{{ path('app_student_index') }}">back to list</a>
+
+{% endblock %}

@@ -28,9 +28,6 @@ abstract class Lead
     #[ORM\Column(length: 255, enumType: Gender::class)]
     private array $gender = [];
 
-    #[ORM\Column]
-    private array $domain = [];
-
     #[ORM\Column(length: 255, enumType: Language::class)]
     private array $language = [];
 
@@ -39,6 +36,9 @@ abstract class Lead
 
     #[ORM\ManyToMany(targetEntity: Domain::class, inversedBy: 'leads')]
     private Collection $domains;
+
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
 
     public function __construct()
     {
@@ -124,6 +124,18 @@ abstract class Lead
     public function removeDomain(Domain $domain): static
     {
         $this->domains->removeElement($domain);
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
