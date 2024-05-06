@@ -28,8 +28,8 @@ class Sponsorship
     #[ORM\JoinColumn(nullable: false)]
     private ?Proposal $proposal = null;
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private array $status = [];
+    #[ORM\Column(length: 255)]
+    private ?string $status = null;
 
     public function getId(): ?int
     {
@@ -84,12 +84,12 @@ class Sponsorship
         return $this;
     }
 
-    public function getStatus(): array
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(?array $status): static
+    public function setStatus(string $status): static
     {
         $this->status = $status;
 

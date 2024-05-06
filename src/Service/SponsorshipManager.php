@@ -25,19 +25,19 @@ final class SponsorshipManager
     {}
 
     /**
-     * 1 - pass sp to proposed
+     * 1 - pass sp to in_progress
      * 2 - unlock 
      */
     public function adminProposal(Sponsorship $sponsorship): void
     {
         // Pass sponsorship to proposed
-        $this->sponsorshipWorkflow->apply($sponsorship, 'to_proposed');
+        $this->sponsorshipWorkflow->apply($sponsorship, 'to_in_progress');
 
         // Pass origin lead [request,proposal] to proposed
         $request = $sponsorship->getRequest();
-        $this->leadWorkflow->apply($request, 'to_proposed');
+        $this->leadWorkflow->apply($request, 'to_sponsorized');
         $proposal = $sponsorship->getProposal();
-        $this->leadWorkflow->apply($proposal, 'to_proposed');
+        $this->leadWorkflow->apply($proposal, 'to_sponsorized');
 
         // unlock all other
         /** @var QueryBuilder $qb  */

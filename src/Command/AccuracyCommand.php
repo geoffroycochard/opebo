@@ -115,7 +115,7 @@ class AccuracyCommand extends Command
                 ->setResume($resume)
                 ->setProposal($this->proposalRepository->find($proposalId))
                 ->setRequest($request)
-                ->setStatus(array_flip($initialPlace))
+                ->setStatus(array_pop($initialPlace))
             ;
             $this->entityManagerInterface->persist($sponsorship);
         }
