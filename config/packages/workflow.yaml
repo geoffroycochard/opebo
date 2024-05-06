@@ -14,7 +14,7 @@ framework:
                 - ended
 
             transitions:
-                to_proposed:
+                to_in_progress:
                     from: initialized
                     to: in_progress
                 to_ended: # L'un des parti souhaite arrêter le parrainnage
