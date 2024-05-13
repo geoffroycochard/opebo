@@ -15,5 +15,4 @@ enum Gender: string {
             self::F => 'app.gender.female', 
         };
     }
-
 }

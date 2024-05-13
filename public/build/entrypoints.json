@@ -1,0 +1,25 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.js",
+        "/build/app.js"
+      ],
+      "css": [
+        "/build/vendors-node_modules_bootstrap-icons_font_bootstrap-icons_css.css",
+        "/build/app.css"
+      ]
+    },
+    "frontend": {
+      "js": [
+        "/build/runtime.js",
+        "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_js-node_modules_bootstrap-icons_font_bootstr-a705a6.js",
+        "/build/frontend.js"
+      ],
+      "css": [
+        "/build/vendors-node_modules_bootstrap-icons_font_bootstrap-icons_css.css",
+        "/build/vendors-node_modules_bootstrap_dist_js_bootstrap_js-node_modules_bootstrap-icons_font_bootstr-a705a6.css"
+      ]
+    }
+  }
+}

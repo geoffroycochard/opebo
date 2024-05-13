@@ -1,0 +1,55 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+
+{% block main %}
+	{{ parent() }}
+
+
+	<div class="card">
+		<div class="card-body">
+			<h5 class="card-title">
+				<i class="fa-solid fa-cogs"></i>
+				Results
+			</h5>
+			<table class="table">
+				<tr>
+					<th>Sponsor</th>
+					<th>Status</th>
+					<th>Score</th>
+					<th>Detail</th>
+					<th></th>
+				</tr>
+				{% for sp in sponsorships %}
+					<tr>
+						<td>{{ sp.proposal.person.lastname }}</td>
+						<td>{{ sp.status }}</td>
+						<td>{{ sp.score }}</td>
+						<td>
+							<ul>
+								{% for kpi, score in sp.resume %}
+									<li>{{ kpi }}
+										:
+										{{ score }}
+									</li>
+								{% endfor %}
+							</ul>
+						</td>
+						<td>
+							{% if workflow_can(sp, 'to_in_progress') %}
+								<a href="{{path('app_admin_request_proposal_validate', {sponsorship: sp.id})}}" class="btn btn-primary">Validate</a>
+							{% endif %}
+							{% if 'in_progress' in workflow_marked_places(sp) %}
+								{% set url = ea_url()
+                        .setController('App\\Controller\\Admin\\SponsorshipCrudController')
+                        .set('entityId', sp.id)
+                        .setAction('detail') 
+                        .generateUrl() %}
+								<a href="{{ url }}" class="btn btn-primary">Consulter</a>
+							{% endif %}
+						</td>
+					</tr>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+</div></div>{% endblock %}

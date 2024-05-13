@@ -11,6 +11,8 @@ security:
         # used to reload user from session & other features (e.g. switch_user)
         api_user:
             id: App\Security\UserApiProvider
+        person_user:
+            id: App\Security\PersonProvider
 
     firewalls:
         dev:
@@ -22,6 +24,17 @@ security:
             provider: api_user
             custom_authenticators:
                 - App\Security\ApiKeyAuthenticator
+        app:
+            pattern: ^/app
+            login_link:
+                check_route: login_check
+                signature_properties: ['id']
+                success_handler: App\Security\Authentication\AuthenticationSuccessHandler
+            security: true
+            provider: person_user
+
+            # custom_authenticators:
+            #     - App\Security\PersonAppAuthenticator
         main:
             lazy: true
             provider: users_in_memory

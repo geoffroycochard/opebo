@@ -70,6 +70,45 @@ final class AccuracyCalculator
             'domain' => 30, 
             'objective' => 100
         ];
+        /*
+        $kpis = [
+            "CONVIVIALITY" => [
+                "language" => 100,
+                "gender" => 100,
+                "objective" => 50,
+                "domain" => 30,
+                "location" => 100,
+            ],
+            "HOUSING" => [
+                "language" => 100,
+                "gender" => 100,
+                "objective" => 100,
+                "domain" => 10,
+                "location" => 100,
+            ],
+            "ADMINISTRATIVE" => [
+                "language" => 70,
+                "gender" => 100,
+                "objective" => 50,
+                "domain" => 10,
+                "location" => 50,
+            ],
+            "INTERNSHIP" => [
+                "language" => 20,
+                "gender" => 100,
+                "objective" => 50,
+                "domain" => 100,
+                "location" => 10,
+            ],
+            "WORK" => [
+                "language" => 20,
+                "gender" => 100,
+                "objective" => 50,
+                "domain" => 100,
+                "location" => 10,
+            ],
+        ]; 
+        */
 
         $score = [];
         foreach ($dataset as $proposalId => $data) {
