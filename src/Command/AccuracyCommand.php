@@ -51,7 +51,6 @@ class AccuracyCommand extends Command
 
         if (!$request) {
             throw new \Exception(sprintf('Unable to find request %d id.', $requestId), 1);
-            
         }
 
         $score = $this->accuracyCalculator->calculate($request);
