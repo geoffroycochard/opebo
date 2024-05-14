@@ -6,6 +6,7 @@ use App\Config\Civility;
 use App\Config\Gender;
 use App\Config\PersonStatus;
 use App\Entity\City;
+use App\Entity\Course;
 use App\Entity\Sponsor;
 use App\Entity\Student;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -18,6 +19,7 @@ class PersonFixtures extends Fixture
     {
 
         $cities = ($manager->getRepository(City::class))->findAll();
+        $courses = ($manager->getRepository(Course::class))->findAll();
 
         $faker = Faker\Factory::create('fr_FR');
 
@@ -31,6 +33,7 @@ class PersonFixtures extends Fixture
                 ->setPhone($faker->phoneNumber())
                 ->setEmail($faker->email())
                 ->setCity($cities[array_rand($cities, 1)])
+                ->setCourse($courses[array_rand($courses, 1)])
                 ->setState(PersonStatus::Active)
                 ->setCreatedAt(new \DateTimeImmutable())
                 ->setUpdatedAt(new \DateTimeImmutable())

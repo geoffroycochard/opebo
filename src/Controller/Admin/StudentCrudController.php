@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Config\Civility;
 use App\Entity\City;
+use App\Entity\Course;
 use App\Entity\Student;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -38,6 +39,17 @@ class StudentCrudController extends AbstractCrudController
             TextField::new('firstName'),
             TextField::new('lastName'),
             TextField::new('phone'),
+            TextField::new('course.sector.establishment')->hideOnForm(),
+            TextField::new('course.sector')->hideOnForm(),
+            TextField::new('course')->hideOnForm(),
+            AssociationField::new('course')
+                ->setFormTypeOption(
+                    'choice_label', function(Course $course) {
+                        return $course->getName();
+                    }
+                )
+                ->hideOnIndex()
+            ,
             EmailField::new('email'),
             AssociationField::new('city')
                 ->setFormTypeOption(

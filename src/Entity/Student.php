@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
 class Student extends Person
 {
+    #[ORM\ManyToOne(inversedBy: 'students')]
+    private ?Course $course = null;
+
     /**
      * Removes sensitive data from the user.
      *
@@ -43,5 +46,17 @@ class Student extends Person
      */
     public function getUserIdentifier(): string {
         return $this->getEmail();
+    }
+
+    public function getCourse(): ?Course
+    {
+        return $this->course;
+    }
+
+    public function setCourse(?Course $course): static
+    {
+        $this->course = $course;
+
+        return $this;
     }
 }

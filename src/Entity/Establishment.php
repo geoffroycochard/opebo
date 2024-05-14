@@ -28,6 +28,11 @@ class Establishment
         $this->sectors = new ArrayCollection();
     }
 
+    public function __toString(): string
+    {
+        return $this->getName();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
