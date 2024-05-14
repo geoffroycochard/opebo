@@ -121,6 +121,16 @@ abstract class Person implements UserInterface
         $this->leads = new ArrayCollection();
     }
 
+    public function getFullname(): string
+    {
+        return implode(' ', [
+            $this->getCivility()->name,
+            $this->getFirstname(),
+            $this->getLastname(),
+            $this->getGender()->name,
+        ]);
+    }
+
     /**
      * Summary of getId
      * @return int|null

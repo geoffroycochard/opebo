@@ -21,13 +21,27 @@
 				</tr>
 				{% for sp in sponsorships %}
 					<tr>
-						<td>{{ sp.proposal.person.lastname }}</td>
+						<td>
+							{{ sp.proposal.person.fullname }}<br />
+							<ul>
+								{% for o in sp.proposal.objective %}
+									<li>{{ o|trans }}</li>		
+								{% endfor %}
+							</ul>
+							{{ sp.proposal.person.city }}<br />
+							<ul>
+								{% for l in sp.proposal.language %}
+									<li>{{ l|trans }}</li>		
+								{% endfor %}
+							</ul>
+						</td>
 						<td>{{ sp.status }}</td>
 						<td>{{ sp.score }}</td>
 						<td>
 							<ul>
+								{% set Objective = enum('\\App\\Config\\Objective') %}
 								{% for kpi, values in sp.resume %}
-									<li>{{ kpi }} : {{ values.total }}
+									<li>{{ Objective.from(kpi)|trans }} : {{ values.total }}
 										<ul>
 											{% for k, score in values.kpis %}
 												<li>{{ k }} : {{ score }}</li>

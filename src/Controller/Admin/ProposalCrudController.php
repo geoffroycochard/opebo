@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Config\Gender;
+use App\Config\Language;
+use App\Config\Objective;
 use App\Entity\Domain;
 use App\Entity\Person;
 use App\Entity\Proposal;
@@ -31,13 +33,24 @@ class ProposalCrudController extends AbstractCrudController
             AssociationField::new('person')
                 ->hideOnIndex()
                 ->setFormTypeOption('choice_label', function (Person $sponsor, $key, $value) {
-                    return $sponsor->getLastname();
+                    return $sponsor->getFullname();
                 })
             ,
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
+            ChoiceField::new('language')
+                ->setFormType(EnumType::class)
+                ->setChoices(Language::cases())
+                ->setFormTypeOption('multiple', true)
+            ,
+            ChoiceField::new('objective')
+                ->setFormType(EnumType::class)
+                ->setChoices(Objective::cases())
+                ->setFormTypeOption('multiple', true)
+            ,
             AssociationField::new('domains')
-                ->setCrudController(DomainCrudController::class)->autocomplete()
+                ->setCrudController(DomainCrudController::class)
+                ->autocomplete()
         ];
     }
 

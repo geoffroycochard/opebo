@@ -47,7 +47,7 @@ final class AccuracyCalculator
                     function ($gender) {
                         return $gender->value;
                     },
-                    $proposal->getGender()
+                    [$proposal->getPerson()->getGender()]
                 ),
                 'language' => array_map(
                     function ($language) {
@@ -65,9 +65,9 @@ final class AccuracyCalculator
                     $proposal->getObjective()
                 ),
                 'location' => [
-                    'city' => $proposal->getCity()->getName(),
-                    'lat' => $proposal->getCity()->getLat(),
-                    'lng' => $proposal->getCity()->getLng()
+                    'city' => $proposal->getPerson()->getCity()->getName(),
+                    'lat' => $proposal->getPerson()->getCity()->getLat(),
+                    'lng' => $proposal->getPerson()->getCity()->getLng()
                 ]
             ];
             $dataset[$proposal->getId()] = $d;
@@ -78,7 +78,7 @@ final class AccuracyCalculator
                 function ($gender) {
                     return $gender->value;
                 },
-                $request->getGender()
+                [$request->getPerson()->getGender()]
             ),
             'language' => array_map(
                 function ($language) {
@@ -96,9 +96,9 @@ final class AccuracyCalculator
                 $request->getObjective()
             ),
             'location' => [
-                'city' => $request->getCity()->getName(),
-                'lat' => $request->getCity()->getLat(),
-                'lng' => $request->getCity()->getLng()
+                'city' => $request->getPerson()->getCity()->getName(),
+                'lat' => $request->getPerson()->getCity()->getLat(),
+                'lng' => $request->getPerson()->getCity()->getLng()
             ]
         ];
         $this->leadWorkflow->apply($request, 'to_blocked');
