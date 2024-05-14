@@ -2,10 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Config\Gender;
 use App\Config\Language;
 use App\Config\Objective;
-use App\Entity\City;
 use App\Entity\Domain;
 use App\Entity\Proposal;
 use App\Entity\Request;
@@ -30,7 +28,6 @@ class LeadFixtures extends Fixture implements DependentFixtureInterface
     public function load(ObjectManager $manager): void
     {
         $domainListing = ($manager->getRepository(Domain::class))->findAll();
-        $cities = ($manager->getRepository(City::class))->findAll();
 
         foreach ([
                 Student::class => Request::class, 
@@ -47,10 +44,8 @@ class LeadFixtures extends Fixture implements DependentFixtureInterface
                 $request = (new $leadClass)
                     ->setLanguage($this->rand(Language::cases(), rand(1,2)))
                     ->setObjective($this->rand(Objective::cases(), rand(1,3)))
-                    ->setGender($this->rand(Gender::cases(), 1))
                     ->setPerson($person)
                     ->setDomains($domains)
-                    ->setCity($this->rand($cities, 1)[0])
                     ->setStatus('free')
                 ;
                 $manager->persist($request);

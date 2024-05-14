@@ -27,9 +27,6 @@ abstract class Lead
     #[ORM\ManyToOne(inversedBy: 'leads')]
     private ?Person $person = null;
 
-    #[ORM\Column(length: 255, enumType: Gender::class)]
-    private array $gender = [];
-
     #[ORM\Column(length: 255, enumType: Language::class)]
     private array $language = [];
 
@@ -47,10 +44,6 @@ abstract class Lead
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
-
-    #[ORM\ManyToOne(inversedBy: 'leads')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?City $city = null;
 
     public function __construct()
     {
@@ -70,18 +63,6 @@ abstract class Lead
     public function setPerson(?Person $person): static
     {
         $this->person = $person;
-
-        return $this;
-    }
-
-    public function getGender(): array
-    {
-        return $this->gender;
-    }
-
-    public function setGender(array $gender): static
-    {
-        $this->gender = $gender;
 
         return $this;
     }
@@ -188,17 +169,5 @@ abstract class Lead
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
-    }
-
-    public function getCity(): ?City
-    {
-        return $this->city;
-    }
-
-    public function setCity(?City $city): static
-    {
-        $this->city = $city;
-
-        return $this;
     }
 }

@@ -2,6 +2,10 @@
 
 namespace App\DataFixtures;
 
+use App\Config\Civility;
+use App\Config\Gender;
+use App\Config\PersonStatus;
+use App\Entity\City;
 use App\Entity\Sponsor;
 use App\Entity\Student;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -13,17 +17,21 @@ class PersonFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
+        $cities = ($manager->getRepository(City::class))->findAll();
+
         $faker = Faker\Factory::create('fr_FR');
 
-        for ($i=0; $i < 5; $i++) { 
+        for ($i=0; $i < 15; $i++) { 
             $student = new Student();
             $student
-                ->setCivility($faker->title())
+                ->setGender(Gender::cases()[array_rand(Gender::cases())])
+                ->setCivility(Civility::cases()[array_rand(Civility::cases())])
                 ->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
                 ->setPhone($faker->phoneNumber())
                 ->setEmail($faker->email())
-                ->setState('valid')
+                ->setCity($cities[array_rand($cities, 1)])
+                ->setState(PersonStatus::Active)
                 ->setCreatedAt(new \DateTimeImmutable())
                 ->setUpdatedAt(new \DateTimeImmutable())
             ;
@@ -31,15 +39,17 @@ class PersonFixtures extends Fixture
         }
         
 
-        for ($i=0; $i < 5; $i++) { 
+        for ($i=0; $i < 35; $i++) { 
             $sponsor = new Sponsor();
             $sponsor
-                ->setCivility($faker->title())
+                ->setGender(Gender::cases()[array_rand(Gender::cases())])
+                ->setCivility(Civility::cases()[array_rand(Civility::cases())])
                 ->setFirstname($faker->firstName())
                 ->setLastname($faker->lastName())
                 ->setPhone($faker->phoneNumber())
                 ->setEmail($faker->email())
-                ->setState('valid')
+                ->setCity($cities[array_rand($cities, 1)])
+                ->setState(PersonStatus::Active)
                 ->setCreatedAt(new \DateTimeImmutable())
                 ->setUpdatedAt(new \DateTimeImmutable())
             ;

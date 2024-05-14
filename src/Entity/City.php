@@ -29,12 +29,17 @@ class City
     #[ORM\Column(type: Types::TEXT)]
     private ?string $shape = null;
 
-    #[ORM\OneToMany(mappedBy: 'city', targetEntity: Lead::class)]
-    private Collection $leads;
+    #[ORM\OneToMany(mappedBy: 'city', targetEntity: Person::class)]
+    private Collection $persons;
 
     public function __construct()
     {
         $this->leads = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName();
     }
 
     public function getId(): ?int
@@ -98,29 +103,29 @@ class City
     }
 
     /**
-     * @return Collection<int, Lead>
+     * @return Collection<int, Person>
      */
-    public function getLeads(): Collection
+    public function getPersons(): Collection
     {
-        return $this->leads;
+        return $this->persons;
     }
 
-    public function addLead(Lead $lead): static
+    public function addPerson(Person $person): static
     {
-        if (!$this->leads->contains($lead)) {
-            $this->leads->add($lead);
-            $lead->setCity($this);
+        if (!$this->persons->contains($person)) {
+            $this->persons->add($person);
+            $person->setCity($this);
         }
 
         return $this;
     }
 
-    public function removeLead(Lead $lead): static
+    public function removePerson(Person $person): static
     {
-        if ($this->leads->removeElement($lead)) {
+        if ($this->persons->removeElement($person)) {
             // set the owning side to null (unless already changed)
-            if ($lead->getCity() === $this) {
-                $lead->setCity(null);
+            if ($person->getCity() === $this) {
+                $person->setCity(null);
             }
         }
 

@@ -52,10 +52,10 @@ class RequestCrudController extends AbstractCrudController
             AssociationField::new('person')->hideOnIndex(),
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
-            ChoiceField::new('gender'),
             ChoiceField::new('language'),
             ChoiceField::new('objective'),
-            CollectionField::new('domains')->renderExpanded()
+            AssociationField::new('domains')
+                ->autocomplete()
         ];
     }
 

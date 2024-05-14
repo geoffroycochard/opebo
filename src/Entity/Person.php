@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use App\Config\Civility;
+use App\Config\Gender;
+use App\Config\PersonStatus;
 use App\Repository\PersonRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -16,6 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\DiscriminatorColumn(name: 'discr', type: 'string')]
 #[ORM\DiscriminatorMap(['sponsor' => Sponsor::class, 'student' => Student::class])]
 #[HasLifecycleCallbacks]
+#[UniqueEntity('email')]
 /**
  * Summary of Person
  */
@@ -30,12 +35,15 @@ abstract class Person implements UserInterface
      */
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255, enumType: Gender::class)]
+    private ?Gender $gender = null;
+
+    #[ORM\Column(type: Types::STRING, length: 255, enumType: Civility::class)]
     /**
      * Summary of civility
      * @var 
      */
-    private ?string $civility = null;
+    private ?Civility $civility = null;
 
     #[ORM\Column(length: 255)]
     /**
@@ -58,12 +66,12 @@ abstract class Person implements UserInterface
      */
     private ?string $phone = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: Types::STRING, length: 255, enumType: PersonStatus::class)]
     /**
      * Summary of state
      * @var 
      */
-    private ?string $state = null;
+    private ?PersonStatus $state = null;
 
     #[ORM\Column]
     /**
@@ -88,7 +96,6 @@ abstract class Person implements UserInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\Email]
-    #[Assert\Unique]
     /**
      * Summary of email
      * @var 
@@ -101,6 +108,10 @@ abstract class Person implements UserInterface
      * @var 
      */
     private ?\DateTimeInterface $birthdate = null;
+
+    #[ORM\ManyToOne(inversedBy: 'persons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
 
     /**
      * Summary of __construct
@@ -119,21 +130,33 @@ abstract class Person implements UserInterface
         return $this->id;
     }
 
+    public function getGender(): ?Gender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(Gender $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
     /**
      * Summary of getCivility
-     * @return string|null
+     * @return Civility|null
      */
-    public function getCivility(): ?string
+    public function getCivility(): ?Civility
     {
         return $this->civility;
     }
 
     /**
      * Summary of setCivility
-     * @param string $civility
+     * @param Civility $civility
      * @return Person
      */
-    public function setCivility(string $civility): static
+    public function setCivility(Civility $civility): static
     {
         $this->civility = $civility;
 
@@ -207,17 +230,17 @@ abstract class Person implements UserInterface
      * Summary of getState
      * @return string|null
      */
-    public function getState(): ?string
+    public function getState(): ?PersonStatus
     {
         return $this->state;
     }
 
     /**
      * Summary of setState
-     * @param string $state
+     * @param PersonStatus $state
      * @return Person
      */
-    public function setState(string $state): static
+    public function setState(PersonStatus $state): static
     {
         $this->state = $state;
 
@@ -367,6 +390,18 @@ abstract class Person implements UserInterface
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
+
+        return $this;
     }
     
 }

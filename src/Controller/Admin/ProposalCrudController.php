@@ -36,30 +36,6 @@ class ProposalCrudController extends AbstractCrudController
             ,
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
-            ChoiceField::new('gender')
-                ->renderExpanded(true),
-            //     ->setFormType(EnumType::class)
-            //     ->setFormTypeOptions([
-            //         // 'class' => Gender::class,
-            //         'choice_label' => function (Gender $choice, $key, $value) {
-            //             dump($choice, $value, $key);
-            //             return $choice->value;
-            //         },
-            //         'choices' => Gender::cases(),
-            //         'choice_value' => function (Gender|array $value, $key): ?string {
-            //             dump($key);
-            //             if ($value instanceof Gender) {
-            //                 return (string) $value->value;
-            //             }
-            //             return null;
-            //         },
-            //         'setter' => function (Proposal $entity, int $value): void {
-            //             $entity->setStatus(Gender::tryFrom($value));
-            //         }
-            //     ])
-            // ,
-            // ChoiceField::new('language'),
-            // ChoiceField::new('objective'),
             AssociationField::new('domains')
                 ->setCrudController(DomainCrudController::class)->autocomplete()
         ];
