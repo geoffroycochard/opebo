@@ -11,6 +11,7 @@ use App\Entity\Sector;
 use App\Entity\Sponsor;
 use App\Entity\Sponsorship;
 use App\Entity\Student;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -19,10 +20,37 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DashboardController extends AbstractDashboardController
 {
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    )
+    {}
+
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig');
+        $stats = [
+            'request_awaiting' => count($this->entityManager
+                ->getRepository(Request::class)
+                ->findBy([
+                    'status' => 'free'
+                ]))
+            ,
+            'sponsorship_from_start' => count($this->entityManager
+                ->getRepository(Sponsorship::class)
+                ->findAll())
+            ,
+            'student_from_start' => count($this->entityManager
+                ->getRepository(Student::class)
+                ->findAll())
+            ,
+            'sponsor_from_start' => count($this->entityManager
+                ->getRepository(Sponsor::class)
+                ->findAll())
+        ];
+        
+        return $this->render('admin/dashboard.html.twig',[
+            'statistics' => $stats
+        ]);
     }
 
     public function configureDashboard(): Dashboard
