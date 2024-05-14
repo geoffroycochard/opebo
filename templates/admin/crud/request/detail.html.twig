@@ -26,10 +26,13 @@
 						<td>{{ sp.score }}</td>
 						<td>
 							<ul>
-								{% for kpi, score in sp.resume %}
-									<li>{{ kpi }}
-										:
-										{{ score }}
+								{% for kpi, values in sp.resume %}
+									<li>{{ kpi }} : {{ values.total }}
+										<ul>
+											{% for k, score in values.kpis %}
+												<li>{{ k }} : {{ score }}</li>
+											{% endfor %}
+										</ul>
 									</li>
 								{% endfor %}
 							</ul>

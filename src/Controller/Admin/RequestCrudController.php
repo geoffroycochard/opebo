@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -48,8 +49,9 @@ class RequestCrudController extends AbstractCrudController
         return [
             IdField::new('id'),
             ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
-            TextField::new('person.firstName'),
-            TextField::new('person.lastName'),
+            AssociationField::new('person')->hideOnIndex(),
+            TextField::new('person.firstName')->hideOnForm(),
+            TextField::new('person.lastName')->hideOnForm(),
             ChoiceField::new('gender'),
             ChoiceField::new('language'),
             ChoiceField::new('objective'),
@@ -69,13 +71,14 @@ class RequestCrudController extends AbstractCrudController
         $calculate = Action::new('calculate')
             ->linkToCrudAction('calculate')
             ->displayIf(static function (Request $request) {
-                return $request->getStatus() === 'free';
+                return in_array($request->getStatus(), ['free', 'blocked']);
             })
         ;
 
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $calculate)
+            ->add(Crud::PAGE_DETAIL, $calculate)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
             ->remove(Crud::PAGE_INDEX, Action::DELETE)

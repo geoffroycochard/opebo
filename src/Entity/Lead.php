@@ -48,6 +48,10 @@ abstract class Lead
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'leads')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?City $city = null;
+
     public function __construct()
     {
         $this->domains = new ArrayCollection();
@@ -184,5 +188,17 @@ abstract class Lead
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
+
+        return $this;
     }
 }

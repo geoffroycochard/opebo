@@ -7,7 +7,6 @@ enum Gender: string {
     case M = 'male';
     case F = 'female';
 
-
     public function title(): string
     {
         return match ($this) {

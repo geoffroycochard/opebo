@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -26,6 +28,14 @@ class City
 
     #[ORM\Column(type: Types::TEXT)]
     private ?string $shape = null;
+
+    #[ORM\OneToMany(mappedBy: 'city', targetEntity: Lead::class)]
+    private Collection $leads;
+
+    public function __construct()
+    {
+        $this->leads = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -83,6 +93,36 @@ class City
     public function setShape(string $shape): static
     {
         $this->shape = $shape;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Lead>
+     */
+    public function getLeads(): Collection
+    {
+        return $this->leads;
+    }
+
+    public function addLead(Lead $lead): static
+    {
+        if (!$this->leads->contains($lead)) {
+            $this->leads->add($lead);
+            $lead->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLead(Lead $lead): static
+    {
+        if ($this->leads->removeElement($lead)) {
+            // set the owning side to null (unless already changed)
+            if ($lead->getCity() === $this) {
+                $lead->setCity(null);
+            }
+        }
 
         return $this;
     }
