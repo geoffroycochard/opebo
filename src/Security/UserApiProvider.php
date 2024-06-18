@@ -56,7 +56,7 @@ class UserApiProvider implements UserProviderInterface, PasswordUpgraderInterfac
 
         // Return a User object after making sure its data is "fresh".
         // Or throw a UsernameNotFoundException if the user no longer exists.
-        return (new UserApi)->setUsername('wpapiuser');
+        return (new UserApi())->setUsername('wpapiuser');
     }
 
     /**

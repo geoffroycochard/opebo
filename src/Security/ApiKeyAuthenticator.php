@@ -2,6 +2,7 @@
 // src/Security/ApiKeyAuthenticator.php
 namespace App\Security;
 
+use Faker\Provider\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,17 +26,18 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
 
     public function authenticate(Request $request): Passport
     {
-        #TODO // TEMP TO TEST
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $apiToken = '123456789';
-        return new SelfValidatingPassport(new UserBadge($apiToken, fn() => new UserApi()));
-
-        if (null === $apiToken) {
+        $apiToken = 'ewvewftfaldygfyrntfttcdkkxlgogna';
+        if ('ewvewftfaldygfyrntfttcdkkxlgogna' !== $apiToken) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
+        
+        // Use anonymous class which implements UserInterface.
         return new SelfValidatingPassport(new UserBadge($apiToken, fn() => new UserApi()));
+
+        // return new UserBadge($apiToken);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response

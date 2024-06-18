@@ -9,8 +9,8 @@ security:
         #     entity:
         #         class: App\Model\UserApi
         # used to reload user from session & other features (e.g. switch_user)
-        api_user:
-            id: App\Security\UserApiProvider
+        # api_user:
+        #     id: App\Security\UserApiProvider
         person_user:
             id: App\Security\PersonProvider
         # used to reload user from session & other features (e.g. switch_user)
@@ -24,9 +24,10 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         api:
+            stateless: true
             pattern: ^/api
             security: true
-            provider: api_user
+            # provider: api_user
             custom_authenticators:
                 - App\Security\ApiKeyAuthenticator
         app:

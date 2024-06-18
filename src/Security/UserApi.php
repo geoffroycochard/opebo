@@ -9,7 +9,7 @@ class UserApi implements UserInterface
     private $username;
 
     private $roles = [];
-
+    
     public function getUsername(): ?string
     {
         return $this->username;
@@ -58,5 +58,10 @@ class UserApi implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function supportsClass($class)
+    {
+        return $class === UserApi::class;
     }
 }

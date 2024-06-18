@@ -1,4 +1,7 @@
 app:
+  civility:
+    mr: Mister
+    mrs: Miss
   language:
     fr: French
     en: English

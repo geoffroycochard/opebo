@@ -1,4 +1,7 @@
 app:
+  civility:
+    mr: Monsieur
+    mrs: Madame
   language:
     fr: Français
     en: Anglais

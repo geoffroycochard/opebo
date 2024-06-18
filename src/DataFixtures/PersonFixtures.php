@@ -19,6 +19,7 @@ class PersonFixtures extends Fixture
     {
 
         $cities = ($manager->getRepository(City::class))->findAll();
+        dd($cities);
         $courses = ($manager->getRepository(Course::class))->findAll();
 
         $faker = Faker\Factory::create('fr_FR');
