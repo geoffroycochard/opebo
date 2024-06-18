@@ -22,17 +22,24 @@
 				{% for sp in sponsorships %}
 					<tr>
 						<td>
-							{{ sp.proposal.person.fullname }}<br />
 							<ul>
-								{% for o in sp.proposal.objective %}
-									<li>{{ o|trans }}</li>		
-								{% endfor %}
-							</ul>
-							{{ sp.proposal.person.city }}<br />
-							<ul>
-								{% for l in sp.proposal.language %}
-									<li>{{ l|trans }}</li>		
-								{% endfor %}
+							
+								<li>{{ sp.proposal.person.fullname }}</li>
+								<li>Objective
+									<ul>
+										{% for o in sp.proposal.objective %}
+											<li>{{ o|trans }}</li>		
+										{% endfor %}
+									</ul>
+								</li>
+								<li>City : {{ sp.proposal.person.city }}</li>
+								<li>Languages
+									<ul>
+										{% for l in sp.proposal.language %}
+											<li>{{ l|trans }}</li>		
+										{% endfor %}
+									</ul>
+								</li>
 							</ul>
 						</td>
 						<td>{{ sp.status }}</td>
