@@ -160,7 +160,7 @@ final class AccuracyCalculator
                             $search[$kpi]['lat'],
                             $search[$kpi]['lng']
                         );
-                        $s = (($diameter - $distance) / 100000) * $boost;
+                        $s = round((($diameter - $distance) / 10000) * $boost);
                     } else {
                         $intersect = array_intersect($data[$kpi], $search[$kpi]);
                         $s = count($intersect) * $boost;
