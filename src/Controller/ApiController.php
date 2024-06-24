@@ -159,7 +159,6 @@ class ApiController extends AbstractController
         // Find city
         $city = $cityRepository->find($register->city);
 
-
         // update / create person
         $person->setFirstname($register->firstname);
         $person->setLastname($register->lastname);
