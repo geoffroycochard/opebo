@@ -13,11 +13,14 @@ use App\Entity\Course;
 use App\Entity\Domain;
 use App\Entity\Proposal;
 use App\Entity\Request;
+use App\Entity\Sponsor;
+use App\Entity\Student;
 use App\Repository\CityRepository;
 use App\Repository\CourseRepository;
 use App\Repository\DomainRepository;
 use App\Repository\PersonRepository;
 use DateTimeImmutable;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +31,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
 /**
- * API Class to communication with bo-ope
+ * API Class bo-ope
  * 
  * Authentification : X-AUTH-TOKEN header
  */
@@ -46,9 +49,9 @@ class ApiController extends AbstractController
         $comments = [];
         $comments[] = $rc->getDocComment();
         foreach($rc->getMethods() as $method) {
-            $comments[] = implode(',', $method->getAttributes());
+            $comments[] = implode("<br>", array_merge([nl2br($method->getDocComment())],$method->getAttributes()));
         }
-        return new Response(implode('', $comments), Response::HTTP_OK);
+        return new Response(implode("<br><br>", $comments), Response::HTTP_OK);
     }
 
     /**
@@ -109,7 +112,7 @@ class ApiController extends AbstractController
     public function domain(ManagerRegistry $managerRegistry): ?Response
     {  
         $data = [];
-        $domains = ($managerRegistry->getRepository(Domain::class));
+        $domains = $managerRegistry->getRepository(Domain::class);
         foreach ($domains->findAll() as $domain) {
             $data[$domain->getId()] = $domain->getName();
         }
@@ -123,7 +126,7 @@ class ApiController extends AbstractController
     public function courses(ManagerRegistry $managerRegistry): ?Response
     {  
         $data = [];
-        $courses = ($managerRegistry->getRepository(Course::class));
+        $courses = $managerRegistry->getRepository(Course::class);
         foreach ($courses->findAll() as $course) {
             $a = [
                 $course->getSector()->getEstablishment()->getName(),
@@ -163,45 +166,69 @@ class ApiController extends AbstractController
         PersonRepository $personRepository,
         CityRepository $cityRepository,
         DomainRepository $domainRepository,
-        CourseRepository $courseRepository
+        CourseRepository $courseRepository,
+        EntityManagerInterface $entityManager
     ): ?Response
     {  
-        $data = [];
-        
         // Find person
         $personClass = 'App\\Entity\\'.ucfirst($register->type);
+        /** @var Student|Sponsor $person */
         $person = $personRepository->findOneBy(['email' => $register->email]) ?? new $personClass;
 
         // Find city
         $city = $cityRepository->find($register->city);
 
         // update / create person
+        $person->setCivility(Civility::from($register->civility));
         $person->setFirstname($register->firstname);
         $person->setLastname($register->lastname);
+        $person->setEmail($register->email);
         $person->setBirthdate(new DateTimeImmutable($register->birthdate));
         $person->setPhone($register->phone);
         $person->setCity($city);
         $person->setState(PersonStatus::Active);
+
+        if ($course = $courseRepository->find($register->course)) {
+            $person->setCourse($course);
+        }
         
         // Gender
         $genderMapping = ['mr' => 'male', 'mrs' => 'female'];
         $gender = Gender::from($genderMapping[$register->civility]);
         $person->setGender($gender);
-
-        // Course
-        $course = $courseRepository->find($register->course);
+        $entityManager->persist($person);
 
         // Lead
         $lead = $register->type === 'student' ? new Request() : new Proposal();
         $lead->setPerson($person);
-        $lead->setObjective(explode(',', $register->objectives));
-        $lead->setLanguage(explode(',', $register->languages));
 
-        // $domains = $domainRepository->findBy(['uid'])
-        dd($lead);
+        // Transform Objectives
+        $objectives = array_map(function($value) use ($register) {
+            return Objective::from($value);
+        },
+        explode(',', $register->objectives));
+        $lead->setObjective($objectives);
 
+        // Transform Languages
+        $languages = array_map(function($value) use ($register) {
+            return Language::from($value);
+        },
+        explode(',', $register->languages));
+        $lead->setLanguage($languages);
 
-        return new JsonResponse($data, Response::HTTP_OK);
+        // Status
+        $lead->setStatus('free');
+
+        $entityManager->persist($lead);
+        $entityManager->flush();
+
+        if ($register->porposalNumber === 2 && $register->type === 'proposal') {
+            $lead = clone $lead;
+            $entityManager->persist($lead);
+            $entityManager->flush();
+        }
+
+        return new JsonResponse('Created', Response::HTTP_OK);
     }
 
 

@@ -24,6 +24,7 @@ final class RegisterDto
         #[Assert\Date]
         public readonly string $birthdate,
         #[Assert\NotBlank]
+        #[Assert\Type('integer')]
         public readonly int $city,
         #[Assert\NotBlank]
         public readonly string $phone,
@@ -35,6 +36,9 @@ final class RegisterDto
         public readonly string $languages,
         #[Assert\NotBlank]
         public readonly int $course,
+        #[Assert\NotBlank]
+        #[Assert\Choice([1,2])]
+        public readonly int $porposalNumber,
     )
     {}
 }
