@@ -153,8 +153,22 @@ class ApiController extends AbstractController
     }
 
     /**
+     * POST DATA SAMPLE
+     * -------------------------
+     * birthdate: "2004-05-24"
+     * city: "45234"
+     * civility:"mr"
+     * course: "16"
+     * domains: "4,5,6"
+     * email: "machine.coqqulon@clement.net"
+     * firstname: "test"
+     * languages: "fr,cn"
+     * lastname: "test"
+     * objectives: "admin-support,help-intership"
+     * phone: "098765432"
+     * porposalNumber: "2"
+     * type: "sponsor"
      * 
-     * {email: geoffroy.cochard@gmail.com, city: 45000, }
      */
     #[Route(
         '/api/register',
@@ -174,6 +188,10 @@ class ApiController extends AbstractController
         $personClass = 'App\\Entity\\'.ucfirst($register->type);
         /** @var Student|Sponsor $person */
         $person = $personRepository->findOneBy(['email' => $register->email]) ?? new $personClass;
+
+        if (get_class($person) != $personClass) {
+            throw new \Exception('This email is already used by another person type');
+        }
 
         // Find city
         $city = $cityRepository->find($register->city);
