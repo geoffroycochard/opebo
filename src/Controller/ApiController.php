@@ -16,6 +16,7 @@ use App\Repository\CityRepository;
 use App\Repository\CourseRepository;
 use App\Repository\DomainRepository;
 use App\Repository\PersonRepository;
+use DateTimeImmutable;
 use Doctrine\Persistence\ManagerRegistry;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
@@ -162,10 +163,11 @@ class ApiController extends AbstractController
         // update / create person
         $person->setFirstname($register->firstname);
         $person->setLastname($register->lastname);
+        $person->setBirthdate(new DateTimeImmutable($register->birthdate));
         $person->setPhone($register->phone);
         $person->setCity($city);
         $person->setState(PersonStatus::Active);
-
+        
         // Gender
         $genderMapping = ['mr' => 'male', 'mrs' => 'female'];
         $gender = Gender::from($genderMapping[$register->civility]);

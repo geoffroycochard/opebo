@@ -21,6 +21,9 @@ final class RegisterDto
         #[Assert\NotBlank]
         public readonly string $lastname,
         #[Assert\NotBlank]
+        #[Assert\Date]
+        public readonly string $birthdate,
+        #[Assert\NotBlank]
         public readonly int $city,
         #[Assert\NotBlank]
         public readonly string $phone,
