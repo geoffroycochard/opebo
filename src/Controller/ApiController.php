@@ -8,6 +8,7 @@ use App\Config\Language;
 use App\Config\Objective;
 use App\Config\PersonStatus;
 use App\Dto\RegisterDto;
+use App\Entity\City;
 use App\Entity\Course;
 use App\Entity\Domain;
 use App\Entity\Proposal;
@@ -130,6 +131,20 @@ class ApiController extends AbstractController
                 $course->getName()
             ];
             $data[$course->getId()] = implode(' / ', $a);
+        }
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    #[Route(
+        '/api/cities',
+        name: 'app_api_cities'
+    )]
+    public function cities(ManagerRegistry $managerRegistry): ?Response
+    {  
+        $data = [];
+        $cities = $managerRegistry->getRepository(City::class);
+        foreach ($cities->findAll() as $city) {
+            $data[$city->getId()] = $city->getName();
         }
         return new JsonResponse($data, Response::HTTP_OK);
     }
