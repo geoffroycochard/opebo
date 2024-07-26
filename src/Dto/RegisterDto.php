@@ -34,8 +34,8 @@ final class RegisterDto
         public readonly string $objectives,
         #[Assert\NotBlank]
         public readonly string $languages,
-        #[Assert\NotBlank]
-        public readonly int $course,
+        public readonly int $establishment,
+        public readonly int $studyLevel,
         #[Assert\NotBlank]
         #[Assert\Choice([1,2])]
         public readonly int $porposalNumber,

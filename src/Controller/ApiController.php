@@ -11,6 +11,7 @@ use App\Dto\RegisterDto;
 use App\Entity\City;
 use App\Entity\Course;
 use App\Entity\Domain;
+use App\Entity\Establishment;
 use App\Entity\Proposal;
 use App\Entity\Request;
 use App\Entity\Sponsor;
@@ -18,6 +19,7 @@ use App\Entity\Student;
 use App\Repository\CityRepository;
 use App\Repository\CourseRepository;
 use App\Repository\DomainRepository;
+use App\Repository\EstablishmentRepository;
 use App\Repository\PersonRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -120,20 +122,15 @@ class ApiController extends AbstractController
     }
 
     #[Route(
-        '/api/courses',
-        name: 'app_api_courses'
+        '/api/establishment',
+        name: 'app_api_establishment'
     )]
-    public function courses(ManagerRegistry $managerRegistry): ?Response
+    public function establishment(ManagerRegistry $managerRegistry): ?Response
     {  
         $data = [];
-        $courses = $managerRegistry->getRepository(Course::class);
-        foreach ($courses->findAll() as $course) {
-            $a = [
-                $course->getSector()->getEstablishment()->getName(),
-                $course->getSector()->getName(),
-                $course->getName()
-            ];
-            $data[$course->getId()] = implode(' / ', $a);
+        $establishments = $managerRegistry->getRepository(Establishment::class);
+        foreach ($establishments->findAll() as $establishment) {
+            $data[$establishment->getId()] = $establishment->getName();
         }
         return new JsonResponse($data, Response::HTTP_OK);
     }
@@ -153,12 +150,13 @@ class ApiController extends AbstractController
     }
 
     /**
+     *
      * POST DATA SAMPLE
      * -------------------------
      * birthdate: "2004-05-24"
      * city: "45234"
      * civility:"mr"
-     * course: "16"
+     * establishment: "16" // if null send 0
      * domains: "4,5,6"
      * email: "machine.coqqulon@clement.net"
      * firstname: "test"
@@ -166,8 +164,11 @@ class ApiController extends AbstractController
      * lastname: "test"
      * objectives: "admin-support,help-intership"
      * phone: "098765432"
-     * porposalNumber: "2"
-     * type: "sponsor"
+     * porposalNumber: "2" // [1,1]
+     * studyLevel: "3" // if null send 0
+     * type: "sponsor" // [sponsor, student]
+     * 
+     * All keys have to be in payload
      * 
      */
     #[Route(
@@ -180,7 +181,7 @@ class ApiController extends AbstractController
         PersonRepository $personRepository,
         CityRepository $cityRepository,
         DomainRepository $domainRepository,
-        CourseRepository $courseRepository,
+        EstablishmentRepository $establishmentRepository,
         EntityManagerInterface $entityManager
     ): ?Response
     {  
@@ -204,10 +205,13 @@ class ApiController extends AbstractController
         $person->setBirthdate(new DateTimeImmutable($register->birthdate));
         $person->setPhone($register->phone);
         $person->setCity($city);
+        if ($register->studyLevel > 0 && $register->type === 'student') {
+            $person->setStudyLevel($register->studyLevel);
+        }
         $person->setState(PersonStatus::Active);
 
-        if ($course = $courseRepository->find($register->course)) {
-            $person->setCourse($course);
+        if ($establishment = $establishmentRepository->find($register->establishment)) {
+            $person->setEstablishment($establishment);
         }
         
         // Gender
