@@ -27,7 +27,7 @@ class ApiKeyAuthenticator extends AbstractAuthenticator
     public function authenticate(Request $request): Passport
     {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $apiToken = 'ewvewftfaldygfyrntfttcdkkxlgogna';
+        // $apiToken = 'ewvewftfaldygfyrntfttcdkkxlgogna';
         if ('ewvewftfaldygfyrntfttcdkkxlgogna' !== $apiToken) {
             // The token header was empty, authentication fails with HTTP Status
             // Code 401 "Unauthorized"
