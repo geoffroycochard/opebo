@@ -41,7 +41,14 @@ final class AccuracyCalculator
         $this->entityManagerInterface->flush();
 
         # TODO : check if available (status)
+        $sponsors = [];
         foreach ($this->proposalRepository->findBy(['status' => 'free']) as $proposal) {
+            // Check sponsor person has many proposals
+            if (in_array($proposal->getPerson()->getId(), $sponsors)) {
+                continue;
+            }
+            $sponsors[] = $proposal->getPerson()->getId();
+            
             $d = [
                 'gender' => array_map(
                     function ($gender) {
