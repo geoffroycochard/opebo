@@ -43,8 +43,6 @@ class DataReferenceCommand extends Command
     public function __construct(
         private EntityManagerInterface $entityManagerInterface,
         private EstablishmentRepository $establishmentRepository,
-        private SectorRepository $sectorRepository,
-        private CourseRepository $courseRepository,
         private ValidatorInterface $validator
     )
     {
@@ -79,43 +77,11 @@ class DataReferenceCommand extends Command
                 $e[$record['etablissement']] = $et;
             }
 
-            if (!array_key_exists($record['section'], $s)) {
-                $se = (new Sector)
-                    ->setName(trim($record['section']))
-                ;
-                $errors = $this->validator->validate($se);
-                if (count($errors) > 0) {
-                    $et = $this->sectorRepository->findOneBy([
-                        'name' => trim($record['section'])
-                    ]);
-                } else {
-                    $e[$record['etablissement']]->addSector($se);
-                }
-                $s[$record['section']] = $se;
-            }
-
-            if (!array_key_exists($record['course'], $c)) {
-                $co = (new Course)
-                    ->setName(trim($record['course']))
-                ;
-                $errors = $this->validator->validate($co);
-                if (count($errors) > 0) {
-                    $et = $this->courseRepository->findOneBy([
-                        'name' => trim($record['course'])
-                    ]);
-                } else {
-                    $s[$record['section']]->addCourse($co);
-                }
-                $c[$record['course']] = $co;
-            }
-
-            $k = array_merge($k, 
-                explode(' ', $record['section']),
-                explode(' ', $record['course']),
-                explode(' ', $record['keywords']),
-            );
+            $k = array_merge($k, explode(';', $record['keywords']));
             
         }
+
+        $k = array_filter(array_map('trim', $k));
 
         $k = array_unique($k);
         foreach ($k as $kw) {

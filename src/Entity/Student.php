@@ -5,13 +5,17 @@ namespace App\Entity;
 use App\Repository\StudentRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
 class Student extends Person
 {
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    private ?int $studyLevel = null;
+
     #[ORM\ManyToOne(inversedBy: 'students')]
-    private ?Course $course = null;
+    private ?Establishment $establishment = null;
 
     /**
      * Removes sensitive data from the user.
@@ -48,14 +52,26 @@ class Student extends Person
         return $this->getEmail();
     }
 
-    public function getCourse(): ?Course
+    public function getStudyLevel(): ?int
     {
-        return $this->course;
+        return $this->studyLevel;
     }
 
-    public function setCourse(?Course $course): static
+    public function setStudyLevel(?int $studyLevel): static
     {
-        $this->course = $course;
+        $this->studyLevel = $studyLevel;
+
+        return $this;
+    }
+
+    public function getEstablishment(): ?Establishment
+    {
+        return $this->establishment;
+    }
+
+    public function setEstablishment(?Establishment $establishment): static
+    {
+        $this->establishment = $establishment;
 
         return $this;
     }
