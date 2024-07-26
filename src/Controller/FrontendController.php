@@ -21,12 +21,6 @@ use Symfony\Component\Security\Http\LoginLink\LoginLinkNotification;
 #[Route('/app')]
 class FrontendController extends AbstractController
 {
-    #[Route('/login_check', name: 'login_check')]
-    public function check(): Response
-    {
-        return $this->redirectToRoute('app_frontend_dashboard');    
-    }
-
     #[Route('/login', name: 'login')]
     public function requestLoginLink(
         NotifierInterface $notifier,

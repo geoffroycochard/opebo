@@ -73,7 +73,7 @@
 							{% for lead in person.leads %}
 								<li class="list-group-item">
 									{% for objective in lead.objective %}
-										{{ objective.title|trans }}
+										{{ objective|trans }}
 										-
 									{% endfor %}
 									/
