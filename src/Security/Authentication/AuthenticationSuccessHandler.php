@@ -14,6 +14,6 @@ class AuthenticationSuccessHandler implements AuthenticationSuccessHandlerInterf
 {
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): Response
     {
-        return new RedirectResponse('/app/');
+        return new RedirectResponse('/app');
     }
 }

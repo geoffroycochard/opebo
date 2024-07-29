@@ -18,10 +18,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkNotification;
 
-#[Route('/app')]
 class FrontendController extends AbstractController
 {
-    #[Route('/login', name: 'login')]
+    #[Route('/app/login_check', name: 'app_frontend_login_check')]
+    public function check(): never
+    {
+        throw new \LogicException('This code should never be reached');
+    }
+
+    #[Route('/app/connect', name: 'app_frontend_login')]
     public function requestLoginLink(
         NotifierInterface $notifier,
         LoginLinkHandlerInterface $loginLinkHandler, 
@@ -59,7 +64,7 @@ class FrontendController extends AbstractController
         return $this->render('frontend/request_login_link.html.twig');
     }
 
-    #[Route('/', name: 'app_frontend_dashboard')]
+    #[Route('/app', name: 'app_frontend_dashboard')]
     public function dashboard(Request $request, PersonRepository $personRepository, LeadRepository $leadRepository): Response
     {
         /** @var Person $person */
@@ -70,7 +75,7 @@ class FrontendController extends AbstractController
         ]);
     }
 
-    #[Route('/sponsorship/back/{sponsorship}/{lead}/{transition}', name: 'app_frontend_sponsorship_back')]
+    #[Route('/app/sponsorship/back/{sponsorship}/{lead}/{transition}', name: 'app_frontend_sponsorship_back')]
     public function sponsorshipBack(
         Sponsorship $sponsorship,
         Lead $lead,

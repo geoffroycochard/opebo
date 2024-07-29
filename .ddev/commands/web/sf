@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+## Description: Deploy command with the current project
+## Usage: sf
+## Example: "ddev sf"
+
+# Example is macOS-specific, but easy to adapt to any OS
+bin/console "$@"

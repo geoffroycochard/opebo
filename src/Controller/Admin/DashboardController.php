@@ -18,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+#[Route('/admin')]
 class DashboardController extends AbstractDashboardController
 {
     public function __construct(
@@ -25,7 +26,7 @@ class DashboardController extends AbstractDashboardController
     )
     {}
 
-    #[Route('/admin', name: 'admin')]
+    #[Route('/', name: 'app_admin')]
     public function index(): Response
     {
         $stats = [

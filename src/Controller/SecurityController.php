@@ -11,38 +11,22 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+#[Route('/auth')]
 class SecurityController extends AbstractController
 {
-    #[Route('app/login_check', name: 'login_check')]
+    #[Route('/login_check', name: 'app_admin_login_check')]
     public function check(): never
     {
         throw new \LogicException('This code should never be reached');
     }
 
-    #[Route(path: 'app/login', name: 'app_login')]
+    #[Route(path: '/login', name: 'app_admin_login')]
     public function login(
         AuthenticationUtils $authenticationUtils, 
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher
     ): Response
     {
-
-
-        // $user = $entityManager->getRepository(Admin::class)->find(2);
-        // $user->setRoles(['ROLE_ADMIN']);
-        // $plaintextPassword = 'admin';
-
-        // // hash the password (based on the security.yaml config for the $user class)
-        // $hashedPassword = $passwordHasher->hashPassword(
-        //     $user,
-        //     $plaintextPassword
-        // );
-        // $user->setPassword($hashedPassword);
-        // $entityManager->persist($user);
-        // $entityManager->flush();
-        //dd($user);
-
-        //dd($authenticationUtils);
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
@@ -54,7 +38,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route(path: 'app/logout', name: 'app_logout')]
+    #[Route(path: '/logout', name: 'app_admin_logout')]
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');

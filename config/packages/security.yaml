@@ -33,25 +33,24 @@ security:
         app:
             pattern: ^/app
             login_link:
-                check_route: login_check
+                check_route: app_frontend_login_check
                 signature_properties: ['id']
                 success_handler: App\Security\Authentication\AuthenticationSuccessHandler
-            security: true
+            # security: true
             provider: person_user
         main:
-            # pattern: ^/admin
             lazy: true
             provider: app_user_provider
             form_login:
-                login_path: app_login
-                check_path: app_login
+                login_path: app_admin_login
+                check_path: app_admin_login
                 enable_csrf: true
-                default_target_path: admin
+                default_target_path: app_admin
                 always_use_default_target_path: true
             logout:
-                path: app_logout
+                path: app_admin_logout
                 # where to redirect after logout
-                target: app_login
+                target: app_admin_login
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
