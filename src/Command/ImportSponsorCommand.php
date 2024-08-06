@@ -93,7 +93,7 @@ class ImportSponsorCommand extends Command
 
             $proposal = (new Proposal())
                 ->setPerson($sponsor)
-                ->setLanguage(array_merge(explode(',', $record['languages']), ['fr']))
+                ->setLanguage(array_merge(array_filter(explode(',', $record['languages'])), ['fr']))
                 ->setStatus('free')
             ;
 

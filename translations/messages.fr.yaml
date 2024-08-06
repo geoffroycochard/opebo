@@ -14,3 +14,32 @@ app:
     hfi: 'Aide à la recherche un stage'
     hfj: 'Aide à la recherche un job'
 
+Dashboard: Tableau de bord
+Personne: Personne
+Person: Personne
+State: État
+Student: Étudiant
+Sponsor: Parrain
+Lead: Demande / Proposition
+Request: Demande
+Proposal: Proposition
+Sponsorship: Parrainage
+Establishment: Établissement
+Datas: Données
+Status: Statut
+Person.First Name: Nom
+Person.Last Name: Prénom
+Language: Langue
+Objective: Objectif
+Domains: Domaines
+Domain: Domaine
+Civility: Civilité
+Gender: Genre
+Birthdate: Date de naissance
+First Name: Nom
+Last Name: Prénom
+Phone: Téléphone
+Nationality: Nationnalité
+Email: Email
+Active: Actif
+City: Ville
