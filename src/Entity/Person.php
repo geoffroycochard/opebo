@@ -113,6 +113,9 @@ abstract class Person implements UserInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?City $city = null;
 
+    #[ORM\Column(length: 8)]
+    private ?string $nationality = null;
+
     /**
      * Summary of __construct
      */
@@ -410,6 +413,18 @@ abstract class Person implements UserInterface
     public function setCity(?City $city): static
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function getNationality(): ?string
+    {
+        return $this->nationality;
+    }
+
+    public function setNationality(string $nationality): static
+    {
+        $this->nationality = $nationality;
 
         return $this;
     }

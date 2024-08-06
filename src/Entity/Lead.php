@@ -27,7 +27,7 @@ abstract class Lead
     #[ORM\ManyToOne(inversedBy: 'leads')]
     private ?Person $person = null;
 
-    #[ORM\Column(length: 255, enumType: Language::class)]
+    #[ORM\Column(length: 255)]
     private array $language = [];
 
     #[ORM\Column(length: 255, enumType: Objective::class)]

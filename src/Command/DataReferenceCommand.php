@@ -61,7 +61,10 @@ class DataReferenceCommand extends Command
         $e = $s = $c = $k = [];
 
         foreach ($csv->getRecords() as $record) {
-
+            if (empty($record['etablissement'])) {
+                continue;
+            }
+            // dd($record);
             if (!array_key_exists($record['etablissement'], $e)) {
                 $et = (new Establishment)
                     ->setName(trim($record['etablissement']))
@@ -76,20 +79,23 @@ class DataReferenceCommand extends Command
                 }
                 $e[$record['etablissement']] = $et;
             }
-
+            
             $k = array_merge($k, explode(';', $record['keywords']));
             
         }
 
         $k = array_filter(array_map('trim', $k));
-
         $k = array_unique($k);
+        
         foreach ($k as $kw) {
             $kw = trim($kw);
             //$kw = preg_replace('/[^A-Za-z0-9\-]/', '', $kw); // Removes special chars.
             $kw = strtolower($kw);
-            if (!in_array($kw, self::EXCLUDE)) {
-                $kwe = (new Domain)->setName($kw);
+            $kwe = (new Domain)->setName($kw);
+            $errors = $this->validator->validate($kwe);
+            if (count($errors) > 0) {
+                $io->error(sprintf('ks %s already exist', $kw));
+            } else {
                 $this->entityManagerInterface->persist($kwe);
             }
         }
