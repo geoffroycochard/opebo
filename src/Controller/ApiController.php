@@ -281,7 +281,7 @@ class ApiController extends AbstractController
         $entityManager->persist($lead);
         $entityManager->flush();
 
-        if ($register->porposalNumber === 2 && $register->type === 'proposal') {
+        if ($register->proposalNumber === 2 && $register->type === 'proposal') {
             $lead = clone $lead;
             $entityManager->persist($lead);
             $entityManager->flush();

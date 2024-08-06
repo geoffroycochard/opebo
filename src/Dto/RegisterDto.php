@@ -40,7 +40,7 @@ final class RegisterDto
         public readonly int $studyLevel,
         #[Assert\NotBlank]
         #[Assert\Choice([1,2])]
-        public readonly int $porposalNumber,
+        public readonly int $proposalNumber,
     )
     {}
 }
