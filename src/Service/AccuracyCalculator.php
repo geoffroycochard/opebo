@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Config\Objective;
+use App\Entity\Domain;
 use App\Entity\Request;
 use App\Entity\Sponsorship;
 use App\Repository\ProposalRepository;
@@ -56,13 +57,8 @@ final class AccuracyCalculator
                     },
                     [$proposal->getPerson()->getGender()]
                 ),
-                'language' => array_map(
-                    function ($language) {
-                        return $language->value;
-                    },
-                    $proposal->getLanguage()
-                ),
-                'domain' => $proposal->getDomains()->map(function ($domain) {
+                'language' => $proposal->getLanguage(),
+                'domain' => $proposal->getDomains()->map(function (Domain $domain) {
                     return $domain->getName();
                 })->toArray(),
                 'objective' => array_map(
@@ -87,12 +83,7 @@ final class AccuracyCalculator
                 },
                 [$request->getPerson()->getGender()]
             ),
-            'language' => array_map(
-                function ($language) {
-                    return $language->value;
-                },
-                $request->getLanguage()
-            ),
+            'language' => $request->getLanguage(),
             'domain' => $request->getDomains()->map(function ($domain) {
                 return $domain->getName();
             })->toArray(),

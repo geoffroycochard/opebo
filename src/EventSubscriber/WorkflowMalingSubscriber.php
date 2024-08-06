@@ -6,8 +6,11 @@ namespace App\EventSubscriber;
 use App\Entity\Sponsor;
 use App\Entity\Student;
 use App\Entity\Sponsorship;
+use App\Repository\PersonRepository;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Component\Workflow\Event\Event;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mailer\MailerInterface;
@@ -18,7 +21,10 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 class WorkflowMalingSubscriber implements EventSubscriberInterface
 {
     public function __construct(
-        private readonly MailerInterface $mailer
+        private readonly MailerInterface $mailer,
+        private readonly PersonRepository $personRepository,
+        private readonly LoginLinkHandlerInterface $loginLinkHandler,
+        #[Autowire('%admin_email%')] private string $adminEmail,
     ) {}
 
     /**
@@ -34,15 +40,19 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         $sponsor = $sponsorship->getProposal()->getPerson();
 
         // Send poposal to sponsor
+        $user = $this->personRepository->findOneBy(['email' => $sponsor->getEmail()]);
+        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
+        $loginLink = $loginLinkDetails->getUrl();
         $email = (new TemplatedEmail())
-            ->from('hello@ope.orleans-metropole.fr')
+            ->from($this->adminEmail)
             ->to(new Address($sponsor->getEmail()))
-            ->subject('Sponsor : Sponsorship is started!')
+            ->subject('Votre parrainage a commencé !')
             ->htmlTemplate('emails/inprogress/sponsor.html.twig')
             ->context([
                 'student' => $student,
                 'sponsor' => $sponsor,
-                'sponsorship' => $sponsorship
+                'sponsorship' => $sponsorship,
+                'login_link' => $loginLink
             ])
         ;
         try {
@@ -52,15 +62,19 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         }
 
         // Send poposal to student
+        $user = $this->personRepository->findOneBy(['email' => $student->getEmail()]);
+        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
+        $loginLink = $loginLinkDetails->getUrl();
         $email = (new TemplatedEmail())
-            ->from('hello@ope.orleans-metropole.fr')
+        ->from($this->adminEmail)
             ->to(new Address($student->getEmail()))
-            ->subject('Student : Sponsorship is started!')
+            ->subject('Votre demande d\'accompagnement a commencé')
             ->htmlTemplate('emails/inprogress/student.html.twig')
             ->context([
                 'student' => $student,
                 'sponsor' => $sponsor,
-                'sponsorship' => $sponsorship
+                'sponsorship' => $sponsorship,
+                'login_link' => $loginLink
             ])
         ;
         try {

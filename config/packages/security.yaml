@@ -41,6 +41,10 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            login_link:
+                check_route: app_frontend_login_check
+                signature_properties: ['id']
+                success_handler: App\Security\Authentication\AuthenticationSuccessHandler
             form_login:
                 login_path: app_admin_login
                 check_path: app_admin_login
