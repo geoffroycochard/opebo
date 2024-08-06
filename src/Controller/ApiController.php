@@ -9,7 +9,6 @@ use App\Config\Objective;
 use App\Config\PersonStatus;
 use App\Dto\RegisterDto;
 use App\Entity\City;
-use App\Entity\Course;
 use App\Entity\Domain;
 use App\Entity\Establishment;
 use App\Entity\Proposal;
@@ -17,7 +16,6 @@ use App\Entity\Request;
 use App\Entity\Sponsor;
 use App\Entity\Student;
 use App\Repository\CityRepository;
-use App\Repository\CourseRepository;
 use App\Repository\DomainRepository;
 use App\Repository\EstablishmentRepository;
 use App\Repository\PersonRepository;
@@ -26,6 +24,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Intl\Countries;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -83,15 +83,39 @@ class ApiController extends AbstractController
         name: 'app_api_language', 
         requirements: ['local' => 'fr|en']
     )]
-    public function language($locale, TranslatorInterface $translator): ?Response
+    public function language($locale): ?Response
     {        
         $data = [];
-        foreach (Language::cases() as $language) {
-            $data[$language->value] = $language->trans($translator,$locale);
+        \Locale::setDefault($locale);
+        foreach (Languages::getNames() as $code => $label) {
+            $data[$code] = $label;
         }
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
+    /**
+     * Retrieve countries method
+     * /api/country/{locale} with 'local' => 'fr|en'
+     */
+    #[Route(
+        '/api/country/{locale}', 
+        name: 'app_api_country', 
+        requirements: ['local' => 'fr|en']
+    )]
+    public function country($locale): ?Response
+    {        
+        $data = [];
+        \Locale::setDefault($locale);
+        foreach (Countries::getNames() as $code => $label) {
+            $data[$code] = $label;
+        }
+        return new JsonResponse($data, Response::HTTP_OK);
+    }
+
+    /**
+     * Retrieve objectives method
+     * /api/language/{locale} with 'local' => 'fr|en'
+     */
     #[Route(
         '/api/objective/{locale}', 
         name: 'app_api_objective', 
@@ -106,6 +130,11 @@ class ApiController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
+    /**
+     * Retrieve domain method
+     * Only french language
+     * /api/language/{locale} with 'local' => 'fr|en'
+     */
     #[Route(
         '/api/domain/{locale}',
         name: 'app_api_domain',
@@ -121,6 +150,11 @@ class ApiController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
+    /**
+     * Retrieve establishment method
+     * only french
+     * /api/language/{locale} with 'local' => 'fr|en'
+     */
     #[Route(
         '/api/establishment',
         name: 'app_api_establishment'
@@ -135,6 +169,11 @@ class ApiController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK);
     }
 
+    /**
+     * Retrieve cities method
+     * only french
+     * /api/language/{locale} with 'local' => 'fr|en'
+     */
     #[Route(
         '/api/cities',
         name: 'app_api_cities'
@@ -164,9 +203,10 @@ class ApiController extends AbstractController
      * lastname: "test"
      * objectives: "admin-support,help-intership"
      * phone: "098765432"
-     * porposalNumber: "2" // [1,1]
+     * porposalNumber: "2" // [1,2]
      * studyLevel: "3" // if null send 0
      * type: "sponsor" // [sponsor, student]
+     * nationality: "FR"
      * 
      * All keys have to be in payload
      * 
@@ -202,6 +242,7 @@ class ApiController extends AbstractController
         $person->setFirstname($register->firstname);
         $person->setLastname($register->lastname);
         $person->setEmail($register->email);
+        $person->setNationality($register->nationality);
         $person->setBirthdate(new DateTimeImmutable($register->birthdate));
         $person->setPhone($register->phone);
         $person->setCity($city);
@@ -231,12 +272,8 @@ class ApiController extends AbstractController
         explode(',', $register->objectives));
         $lead->setObjective($objectives);
 
-        // Transform Languages
-        $languages = array_map(function($value) use ($register) {
-            return Language::from($value);
-        },
-        explode(',', $register->languages));
-        $lead->setLanguage($languages);
+        // Languages
+        $lead->setLanguage(array_filter( explode(',', $register->languages)));
 
         // Status
         $lead->setStatus('free');
