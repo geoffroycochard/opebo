@@ -5,16 +5,20 @@ namespace App\Controller\Admin;
 use App\Config\Civility;
 use App\Entity\City;
 use App\Entity\Course;
+use App\Entity\Establishment;
 use App\Entity\Student;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Form\Extension\Core\Type\CountryType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Intl\Countries;
 
 class StudentCrudController extends AbstractCrudController
 {
@@ -36,20 +40,19 @@ class StudentCrudController extends AbstractCrudController
             ChoiceField::new('gender')
                 ->setFormType(EnumType::class)
             ,
+            DateField::new('birthdate'),
             TextField::new('firstName'),
             TextField::new('lastName'),
             TextField::new('phone'),
-            TextField::new('course.sector.establishment')->hideOnForm(),
-            TextField::new('course.sector')->hideOnForm(),
-            TextField::new('course')->hideOnForm(),
-            AssociationField::new('course')
-                ->setFormTypeOption(
-                    'choice_label', function(Course $course) {
-                        return $course->getName();
-                    }
-                )
-                ->hideOnIndex()
+            ChoiceField::new('nationality')
+                ->setFormType(CountryType::class)
             ,
+            AssociationField::new('establishment')
+            ->setFormTypeOption(
+                'choice_label', function(Establishment $establishment) {
+                    return $establishment->getName();
+                }
+            ),
             EmailField::new('email'),
             AssociationField::new('city')
                 ->setFormTypeOption(
@@ -57,8 +60,6 @@ class StudentCrudController extends AbstractCrudController
                         return $city->getName();
                     }
                 )
-            ,
-            CollectionField::new('leads')->hideOnForm()
         ];
     }
 }

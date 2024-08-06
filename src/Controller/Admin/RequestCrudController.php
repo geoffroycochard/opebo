@@ -23,6 +23,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -48,12 +49,19 @@ class RequestCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id'),
-            ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
+            // ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
             AssociationField::new('person')->hideOnIndex(),
             TextField::new('person.city')->hideOnIndex(),
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
-            ChoiceField::new('language'),
+            ChoiceField::new('language')
+                ->setChoices(Languages::getNames())
+                // ->setFormTypeOption('choice_label', function($choice){
+                //     dd($choice);
+                // })
+                ->renderAsBadges()
+                
+            ,
             ChoiceField::new('objective'),
             AssociationField::new('domains')
                 ->autocomplete()

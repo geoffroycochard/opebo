@@ -17,6 +17,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
+use Symfony\Component\Intl\Languages;
 
 class ProposalCrudController extends AbstractCrudController
 {
@@ -39,8 +41,7 @@ class ProposalCrudController extends AbstractCrudController
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
             ChoiceField::new('language')
-                ->setFormType(EnumType::class)
-                ->setChoices(Language::cases())
+                ->setFormType(LanguageType::class)
                 ->setFormTypeOption('multiple', true)
             ,
             ChoiceField::new('objective')

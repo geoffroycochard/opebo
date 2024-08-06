@@ -45,8 +45,7 @@ class SponsorCrudController extends AbstractCrudController
                         return $city->getName();
                     }
                 )
-            ,
-            CollectionField::new('leads')->hideOnForm()
+            
         ];
     }
 }
