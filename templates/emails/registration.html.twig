@@ -1,0 +1,45 @@
+{% extends "emails/layout.html.twig" %}
+{% block body %}
+    <h4>Bonjour {{ person.fullName }}!</h4>
+    <p>
+        Nous vous confirmons votre inscription à la plateforme Ôpe avec les informations ci-dessous.
+    </p>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;margin-top: 2em;text-align: left">
+        <tr>
+            <th colspan="2">Vous êtes</td>
+        </tr>
+        <tr>
+            <td>Vous :</td>
+            <td>{{ person.fullName }}</td>
+        </tr>
+        <tr>
+            <td>Ville :</td>
+            <td>{{ person.city }}</td>
+        </tr>
+    </table>
+    {# 
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto; margin-top: 2em; text-align: left">
+        <tr>
+            <th>Votre demande / proposition de parrainage</td>
+        </tr>
+        {% for lead in person.leads %}
+            <tr>
+                <td>
+                    → <strong>Objectif(s)</strong> :
+                    {% for objective in lead.objective %}
+                        {{ objective|trans }} -
+                    {% endfor %}
+                    <br />
+                    → <strong>Langue(s)</strong> :
+                    {% for language in lead.language %}
+                        {{ language|language_name }} -
+                    {% endfor %}
+                    <br />
+                    → <strong>Statut</strong> :
+                    {{ lead.status|trans }}
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+     #}
+{% endblock body %}

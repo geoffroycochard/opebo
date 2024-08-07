@@ -135,7 +135,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
     {
         return [
             'workflow.sponsorship.transition.to_in_progress' => 'toInProgress',
-            'workflow.sponsorship.transition.to_ended' => 'toEnded',
+            'workflow.sponsorship.transition.to_ended' => 'toEnded'
         ];
     }
 }
