@@ -2,23 +2,19 @@
 
 namespace App\Controller\Admin;
 
-use App\Config\Gender;
-use App\Config\Language;
 use App\Config\Objective;
-use App\Entity\Domain;
 use App\Entity\Person;
 use App\Entity\Proposal;
-use App\Entity\Sponsor;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
-use Symfony\Component\Intl\Languages;
 
 class ProposalCrudController extends AbstractCrudController
 {
@@ -53,6 +49,21 @@ class ProposalCrudController extends AbstractCrudController
                 ->setCrudController(DomainCrudController::class)
                 ->autocomplete()
         ];
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->add(Crud::PAGE_INDEX, Action::DETAIL)
+            ->remove(Crud::PAGE_INDEX, Action::NEW)
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function(Action $action){
+                return $action->displayIf(static function (Proposal $proposal) {
+                    return in_array($proposal->getStatus(), ['free']);
+                });
+            })
+            ->remove(Crud::PAGE_INDEX, Action::DELETE)
+            ->remove(Crud::PAGE_DETAIL, Action::DELETE)
+        ;
     }
 
     /*

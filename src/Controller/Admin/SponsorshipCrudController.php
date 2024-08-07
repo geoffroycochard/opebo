@@ -2,14 +2,22 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Proposal;
+use App\Entity\Request;
 use App\Entity\Sponsorship;
+use App\Repository\ProposalRepository;
+use App\Repository\RequestRepository;
+use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -33,6 +41,52 @@ class SponsorshipCrudController extends AbstractCrudController
         return $crud
             ->overrideTemplate('crud/detail', 'admin/crud/sponsorship/detail.html.twig')
         ;
+    }
+
+    public function configureFields(string $pageName): iterable
+    {
+        return [
+            IdField::new('id')->hideOnForm(),
+            TextField::new('status')->hideOnForm(),
+            AssociationField::new('request.person')
+                ->setCrudController(StudentCrudController::class)
+                ->hideOnForm()
+            ,
+            AssociationField::new('proposal.person')
+                ->setCrudController(SponsorCrudController::class)
+                ->hideOnForm()
+            ,
+            AssociationField::new('request')
+                ->setCrudController(RequestCrudController::class)
+                ->setFormTypeOption('query_builder', function (RequestRepository $er): QueryBuilder {
+                        return $er->createQueryBuilder('r')
+                            ->where('r.status = :status')
+                            ->setParameter('status', 'free')
+                        ;
+                    }
+                )
+                ->setFormTypeOption('choice_label', function(Request $request){
+                    return $request->getPerson()->getFullname() . '('. $request->getStatus().')';
+                })
+                ->hideOnIndex()
+            ,
+            AssociationField::new('proposal')
+                ->setCrudController(ProposalCrudController::class)
+                ->setFormTypeOption('query_builder', function (ProposalRepository $er): QueryBuilder {
+                        return $er->createQueryBuilder('p')
+                            ->where('p.status = :status')
+                            ->setParameter('status', 'free')
+                        ;
+                    }
+                )
+                ->setFormTypeOption('choice_label', function(Proposal $proposal){
+                    return $proposal->getPerson()->getFullname(). '('. $proposal->getStatus().')';
+                })
+                ->hideOnIndex()
+            ,
+            NumberField::new('score'),
+            DateTimeField::new('reminder')->hideOnForm()
+        ];
     }
 
     public function configureActions(Actions $actions): Actions

@@ -2,6 +2,8 @@
 
 namespace App\Controller\Admin;
 
+use App\Config\Civility;
+use App\Config\Objective;
 use App\Entity\Request;
 use App\Entity\Sponsorship;
 use App\Repository\SponsorshipRepository;
@@ -24,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
+use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -51,26 +54,28 @@ class RequestCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            IdField::new('id'),
+            IdField::new('id')->hideOnForm(),
             // ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
             AssociationField::new('person')->hideOnIndex(),
             ChoiceField::new('person.civility')
                 ->setFormType(EnumType::class)
+                ->hideOnForm()
             ,
-            TextField::new('person.city')->hideOnIndex(),
+            TextField::new('person.city')->hideOnIndex()->hideOnForm(),
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
             TextField::new('status')->hideOnForm(),
             ChoiceField::new('language')
-                ->setChoices(Languages::getNames())
-                // ->setFormTypeOption('choice_label', function($choice){
-                //     dd($choice);
-                // })
-                ->renderAsBadges()
-                
+                ->setFormType(LanguageType::class)
+                ->setFormTypeOption('multiple', true)
             ,
-            ChoiceField::new('objective'),
+            ChoiceField::new('objective')
+                ->setFormType(EnumType::class)
+                ->setChoices(Objective::cases())
+                ->setFormTypeOption('multiple', true)
+            ,
             AssociationField::new('domains')
+                ->setCrudController(DomainCrudController::class)
                 ->autocomplete()
         ];
     }
@@ -96,16 +101,19 @@ class RequestCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $calculate)
             ->add(Crud::PAGE_DETAIL, $calculate)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
-            ->remove(Crud::PAGE_INDEX, Action::EDIT)
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function(Action $action){
+                return $action->displayIf(static function (Request $request) {
+                    return in_array($request->getStatus(), ['free']);
+                });
+            })
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
-            ->remove(Crud::PAGE_DETAIL, Action::EDIT)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
         ;
     }
+    
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            // ->add('person')
             ->add(ChoiceFilter::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()))
         ;
     }
@@ -132,7 +140,6 @@ class RequestCrudController extends AbstractCrudController
     #[Route('/proposals/validate/{sponsorship}', name: 'app_admin_request_proposal_validate')]
     public function sponsorshipValidate(Sponsorship $sponsorship)
     {
-        // dd('stop');
         $this->sponsorshipManager->adminProposal($sponsorship);
 
         return $this->redirect(

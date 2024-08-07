@@ -31,7 +31,7 @@ class Sponsorship
     private ?Proposal $proposal = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $status = null;
+    private ?string $status = 'initialized';
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
