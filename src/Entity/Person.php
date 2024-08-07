@@ -33,66 +33,66 @@ abstract class Person implements UserInterface
      * Summary of id
      * @var 
      */
-    private ?int $id = null;
+    protected ?int $id = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, enumType: Gender::class)]
-    private ?Gender $gender = null;
+    protected ?Gender $gender = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, enumType: Civility::class)]
     /**
      * Summary of civility
      * @var 
      */
-    private ?Civility $civility = null;
+    protected ?Civility $civility = null;
 
     #[ORM\Column(length: 255)]
     /**
      * Summary of firstname
      * @var 
      */
-    private ?string $firstname = null;
+    protected ?string $firstname = null;
 
     #[ORM\Column(length: 255)]
     /**
      * Summary of lastname
      * @var 
      */
-    private ?string $lastname = null;
+    protected ?string $lastname = null;
 
     #[ORM\Column(length: 255)]
     /**
      * Summary of phone
      * @var 
      */
-    private ?string $phone = null;
+    protected ?string $phone = null;
 
     #[ORM\Column(type: Types::STRING, length: 255, enumType: PersonStatus::class)]
     /**
      * Summary of state
      * @var 
      */
-    private ?PersonStatus $state = null;
+    protected ?PersonStatus $state = null;
 
     #[ORM\Column]
     /**
      * Summary of createdAt
      * @var 
      */
-    private ?\DateTimeImmutable $createdAt = null;
+    protected ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     /**
      * Summary of updatedAt
      * @var 
      */
-    private ?\DateTimeImmutable $updatedAt = null;
+    protected ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'person', targetEntity: Lead::class)]
     /**
      * Summary of leads
      * @var Collection
      */
-    private Collection $leads;
+    protected Collection $leads;
 
     #[ORM\Column(length: 255)]
     #[Assert\Email]
@@ -100,21 +100,21 @@ abstract class Person implements UserInterface
      * Summary of email
      * @var 
      */
-    private ?string $email = null;
+    protected ?string $email = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     /**
      * Summary of birthdate
      * @var 
      */
-    private ?\DateTimeInterface $birthdate = null;
+    protected ?\DateTimeInterface $birthdate = null;
 
     #[ORM\ManyToOne(inversedBy: 'persons')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?City $city = null;
+    protected ?City $city = null;
 
     #[ORM\Column(length: 8)]
-    private ?string $nationality = null;
+    protected ?string $nationality = null;
 
     /**
      * Summary of __construct

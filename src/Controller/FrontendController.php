@@ -5,12 +5,14 @@ namespace App\Controller;
 use App\Entity\Lead;
 use App\Entity\Person;
 use App\Entity\Sponsorship;
+use App\Notifier\CustomLoginLinkNotification;
 use App\Repository\LeadRepository;
 use App\Repository\PersonRepository;
 use App\Repository\SponsorRepository;
 use App\Service\SponsorshipManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Notifier\Notification\Notification;
 use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Recipient\Recipient;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +34,7 @@ class FrontendController extends AbstractController
         LoginLinkHandlerInterface $loginLinkHandler, 
         PersonRepository $userRepository, 
         Request $request
-        ): Response
+    ): Response
     {
         // check if form is submitted
         if ($request->isMethod('POST')) {
@@ -46,9 +48,9 @@ class FrontendController extends AbstractController
 
             // ... send the link and return a response (see next section)
             // create a notification based on the login link details
-            $notification = new LoginLinkNotification(
+            $notification = new CustomLoginLinkNotification(
                 $loginLinkDetails,
-                'Connect to yout manager' // email subject
+                'Connect to yout manager'    // email subject
             );
             // create a recipient for this user
             $recipient = new Recipient($user->getEmail());
@@ -69,30 +71,31 @@ class FrontendController extends AbstractController
     {
         /** @var Person $person */
         $person = $this->getUser();
+        $type = get_class($person);
+
         return $this->render('frontend/dashboard.html.twig', [
             'person' => $person,
-            'type' => get_class($person)
+            'type' => $type
         ]);
     }
 
-    #[Route('/app/sponsorship/back/{sponsorship}/{lead}/{transition}', name: 'app_frontend_sponsorship_back')]
+    #[Route('/app/sponsorship/back/{sponsorship}/{transition}', name: 'app_frontend_sponsorship_back')]
     public function sponsorshipBack(
         Sponsorship $sponsorship,
-        Lead $lead,
         string $transition,
-        SponsorshipManager $sponsorshipManager
+        SponsorshipManager $sponsorshipManager,
+        NotifierInterface $notifier
     )
     {
+
+        $notifier->send(new Notification('Votre parrainage a pris fin suite à votre demande.', ['browser']));
+
         $sponsorshipManager->validate(
             $sponsorship,
             $transition
         );
 
-        dd($sponsorship, $lead, $transition);
-        dd('stop');
 
-        return $this->redirectToRoute('app_frontend_dashboard', [
-            'person' => $lead->getPerson()->getId()
-        ]);
+        return $this->redirectToRoute('app_frontend_dashboard');
     }
 }

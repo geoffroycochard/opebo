@@ -23,9 +23,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
+use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class RequestCrudController extends AbstractCrudController
 {
@@ -34,6 +36,7 @@ class RequestCrudController extends AbstractCrudController
         private SponsorshipRepository $sponsorshipRepository,
         private AdminUrlGenerator $adminUrlGenerator,
         private SponsorshipManager $sponsorshipManager,
+        private TranslatorInterface $translator,
         #[Target('lead')]
         private WorkflowInterface $leadWorkflow,
     ) {
@@ -51,9 +54,13 @@ class RequestCrudController extends AbstractCrudController
             IdField::new('id'),
             // ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
             AssociationField::new('person')->hideOnIndex(),
+            ChoiceField::new('person.civility')
+                ->setFormType(EnumType::class)
+            ,
             TextField::new('person.city')->hideOnIndex(),
             TextField::new('person.firstName')->hideOnForm(),
             TextField::new('person.lastName')->hideOnForm(),
+            TextField::new('status')->hideOnForm(),
             ChoiceField::new('language')
                 ->setChoices(Languages::getNames())
                 // ->setFormTypeOption('choice_label', function($choice){

@@ -5,11 +5,19 @@ namespace App\Twig;
 
 use BadMethodCallException;
 use InvalidArgumentException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 
-class EnumExtension extends AbstractExtension
+class AppExtension extends AbstractExtension
 {
+
+    public function __construct(
+        private TranslatorInterface $translator
+    )
+    {}
+
     /**
      * @return TwigFunction[]
      */
@@ -17,6 +25,7 @@ class EnumExtension extends AbstractExtension
     {
         return [
             new TwigFunction('enum', [$this, 'createProxy']),
+            // new TwigFilter('workflow', [$this, 'workflowLabel']),
         ];
     }
 

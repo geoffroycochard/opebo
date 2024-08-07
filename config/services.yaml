@@ -26,3 +26,7 @@ services:
     App\Security\ApiAuthToken:
         arguments:
             - env(APP_API_TOKEN)
+
+    App\Command\ReminderCommand:
+        arguments:
+            $loginLinkHandler: '@security.authenticator.login_link_handler.app'            

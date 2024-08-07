@@ -5,6 +5,7 @@ namespace App\Service;
 
 use App\Entity\Lead;
 use App\Entity\Sponsorship;
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\SponsorshipRepository;
@@ -30,6 +31,10 @@ final class SponsorshipManager
      */
     public function adminProposal(Sponsorship $sponsorship): void
     {
+        // set reminder
+        $sponsorship->setReminder((new DateTime())->modify('+2 months'));
+        $this->entityManager->persist($sponsorship);
+        
         // Pass sponsorship to proposed
         $this->sponsorshipWorkflow->apply($sponsorship, 'to_in_progress');
 
@@ -55,6 +60,7 @@ final class SponsorshipManager
             $this->leadWorkflow->apply($sponsorship->getProposal(), 'to_free');
             $this->entityManager->remove($sponsorship);
         }
+
 
         $this->entityManager->flush();
     }

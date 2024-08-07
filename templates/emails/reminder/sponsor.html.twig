@@ -1,0 +1,6 @@
+{% extends "emails/layout.html.twig" %}
+{% block body %}
+    <h4>Bonjour {{ sponsor.fullName }}!</h4>
+    <p>Vous avez bénéficié d’une mise en relation avec un étudiant, merci de bien vouloir nous indiquer via votre compte si votre parrainage se poursuit.</p>
+    <p><a href="{{ login_link }}" class="btn btn-primary">Accéder à votre compte</a></p>
+{% endblock body %}

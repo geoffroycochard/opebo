@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
@@ -39,6 +40,7 @@ class SponsorCrudController extends AbstractCrudController
             TextField::new('lastName'),
             TextField::new('phone'),
             EmailField::new('email'),
+            DateField::new('createdAt'),
             AssociationField::new('city')
                 ->setFormTypeOption(
                     'choice_label', function(City $city) {

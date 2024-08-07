@@ -1,9 +1,13 @@
-{# templates/emails/signup.html.twig #}
-<h1>Bonjour {{ sponsor.firstname }}!</h1>
-
-<p>
-    Votre proposition d'accompagnement de {{ student.firstname }} est validé.
-</p>
-<p>
-    <a href="{{ login_link }}">Voir les informations</a>
-</p>
+{% extends "emails/layout.html.twig" %}
+{% block body %}
+    <h4>Bonjour {{ sponsor.fullName }}!</h4>
+    <p>Faisant suite à votre inscription sur la plateforme de parrainage Ôpe, nous avons le plaisir de
+        vous transmettre les coordonnées de l’étudiant que nous vous proposons :</p>
+        <ul style="list-style: none; text-align: left">
+            <li>→ {{ student.fullName }}</li>
+            <li>→ <a href="tel:{{ student.phone }}">{{ student.phone }}</a></li>
+            <li>→ <a href="mailto:{{ student.email }}">{{ student.email }}</a></li>
+        </ul>
+        <p>Vous pouvez contacter votre étudiant.</p>
+    <p><a href="{{ login_link }}" class="btn btn-primary">Voir les informations</a></p>
+{% endblock body %}

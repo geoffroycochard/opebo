@@ -1,0 +1,9 @@
+{% extends "emails/layout.html.twig" %}
+{% block body %}
+    <h4>Bonjour {{ student.fullName }}!</h4>
+    <p>
+        Nous vous informons que le parrainage avec {{ sponsor.fullName }} est terminé. <br />
+        Suite à cette action, vos informations ont été supprimées de note base de données.<br />
+        Merci de votre confiance.
+    </p>
+{% endblock body %}

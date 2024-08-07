@@ -83,10 +83,59 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     * @var TransitionEvent $event
+     */
+    public function toEnded(Event $event): void
+    {
+        /** @var Sponsorship $sponsorship */
+        $sponsorship = $event->getSubject();
+        /** @var Student $student */
+        $student = $sponsorship->getRequest()->getPerson();
+        /** @var Sponsor $sponsor */
+        $sponsor = $sponsorship->getProposal()->getPerson();
+
+        // Send info to sponsor
+        $email = (new TemplatedEmail())
+            ->from($this->adminEmail)
+            ->to(new Address($sponsor->getEmail()))
+            ->subject('Votre parrainage est terminé')
+            ->htmlTemplate('emails/ended/sponsor.html.twig')
+            ->context([
+                'student' => $student,
+                'sponsor' => $sponsor,
+                'sponsorship' => $sponsorship
+            ])
+        ;
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+
+        }
+
+        // Send poposal to student
+        $email = (new TemplatedEmail())
+        ->from($this->adminEmail)
+            ->to(new Address($student->getEmail()))
+            ->subject('Votre accompagnement est terminé')
+            ->htmlTemplate('emails/ended/student.html.twig')
+            ->context([
+                'student' => $student,
+                'sponsor' => $sponsor,
+                'sponsorship' => $sponsorship
+            ])
+        ;
+        try {
+            $this->mailer->send($email);
+        } catch (TransportExceptionInterface $e) {
+        }
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
             'workflow.sponsorship.transition.to_in_progress' => 'toInProgress',
+            'workflow.sponsorship.transition.to_ended' => 'toEnded',
         ];
     }
 }

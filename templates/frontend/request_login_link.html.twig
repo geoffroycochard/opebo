@@ -2,10 +2,11 @@
 {% extends 'frontend.html.twig' %}
 
 {% block body %}
+
 	<form action="{{ path('app_frontend_login') }}" method="POST">
-		<div class="input-group mb-3 w-40">
-			<input type="email" class="form-control" name="email" placeholder="Recipient's email" aria-label="Recipient's email" aria-describedby="button-addon2">
-			<button class="btn btn-outline-primary" type="submit" id="button-addon2">Send Login Link</button>
+		<div class="input-group mb-3 pt-5">
+			<input type="email" class="form-control" name="email" placeholder="Votre email" aria-label="Recipient's email" aria-describedby="button-addon2">
+			<button class="btn btn-outline-primary" type="submit" id="button-addon2">Envoyer le lien</button>
 		</div>
 	</form>
 {% endblock %}

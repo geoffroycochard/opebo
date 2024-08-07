@@ -38,6 +38,9 @@ class Sponsorship
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $reminder = null;
     
     public function getId(): ?int
     {
@@ -140,5 +143,17 @@ class Sponsorship
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTimeImmutable();
+    }
+
+    public function getReminder(): ?\DateTimeInterface
+    {
+        return $this->reminder;
+    }
+
+    public function setReminder(\DateTimeInterface $reminder): static
+    {
+        $this->reminder = $reminder;
+
+        return $this;
     }
 }
