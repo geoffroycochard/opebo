@@ -80,8 +80,16 @@ class DataReferenceCommand extends Command
                 $e[$record['etablissement']] = $et;
             }
             
-            $k = array_merge($k, explode(';', $record['keywords']));
-            
+            $t = explode(';', $record['keywords']);
+            foreach ($t as $i => $v) {
+                $n = explode(',', $v);
+                if (count($n) > 1) {
+                    unset($t[$i]);
+                    $t = array_merge($t, $n);
+                }
+            }
+
+            $k = array_merge($k, $t);
         }
 
         $k = array_filter(array_map('trim', $k));
