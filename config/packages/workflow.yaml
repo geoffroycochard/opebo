@@ -39,7 +39,7 @@ framework:
                     from: free
                     to: blocked
                 to_free:
-                    from: [blocked, archived]
+                    from: [blocked, archived, sponsorized]
                     to: free
                 to_sponsorized:
                     from: [blocked, archived]

@@ -7,8 +7,10 @@ use App\Entity\Sponsor;
 use App\Entity\Student;
 use App\Entity\Sponsorship;
 use App\Repository\PersonRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Component\Workflow\Event\Event;
@@ -17,6 +19,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class WorkflowMalingSubscriber implements EventSubscriberInterface
 {
@@ -24,6 +27,9 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         private readonly MailerInterface $mailer,
         private readonly PersonRepository $personRepository,
         private readonly LoginLinkHandlerInterface $loginLinkHandler,
+        private readonly EntityManagerInterface $entityManager,
+        #[Target('lead')]
+        private WorkflowInterface $leadWorkflow,
         #[Autowire('%admin_email%')] private string $adminEmail,
     ) {}
 
@@ -129,6 +135,11 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
             $this->mailer->send($email);
         } catch (TransportExceptionInterface $e) {
         }
+
+        $this->leadWorkflow->apply($sponsorship->getRequest(), 'to_archived');
+        $this->leadWorkflow->apply($sponsorship->getProposal(), 'to_free');
+        $this->entityManager->flush();
+
     }
 
     public static function getSubscribedEvents(): array

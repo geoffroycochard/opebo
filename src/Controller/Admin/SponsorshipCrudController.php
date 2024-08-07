@@ -7,6 +7,7 @@ use App\Entity\Request;
 use App\Entity\Sponsorship;
 use App\Repository\ProposalRepository;
 use App\Repository\RequestRepository;
+use App\Service\SponsorshipManager;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -19,6 +20,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -27,6 +29,8 @@ class SponsorshipCrudController extends AbstractCrudController
     public function __construct(
         #[Target('sponsorship')]
         private WorkflowInterface $sponsorshipWorkflow,
+        private SponsorshipManager $sponsorshipManager,
+        private AdminUrlGenerator $adminUrlGenerator,
     )
     {}
 
@@ -109,6 +113,15 @@ class SponsorshipCrudController extends AbstractCrudController
 
     public function toEnded(AdminContext $adminContext)
     {
+        $sponsorship = $adminContext->getEntity()->getInstance();
+        $this->sponsorshipManager->validate($sponsorship, 'to_ended');
 
+        return $this->redirect(
+            $this->adminUrlGenerator
+                ->setAction(Crud::PAGE_DETAIL)
+                ->setController(SponsorshipCrudController::class)
+                ->setEntityId($sponsorship->getId())
+                ->generateUrl()
+            );
     }
 }
