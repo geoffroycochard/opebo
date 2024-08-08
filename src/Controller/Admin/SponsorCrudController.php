@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\City;
 use App\Entity\Sponsor;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -20,6 +21,13 @@ class SponsorCrudController extends AbstractCrudController
     public static function getEntityFqcn(): string
     {
         return Sponsor::class;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->overrideTemplate('crud/detail', 'admin/crud/sponsor/detail.html.twig')
+        ;
     }
 
 

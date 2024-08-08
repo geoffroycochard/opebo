@@ -1,0 +1,49 @@
+{% extends '@!EasyAdmin/crud/detail.html.twig' %}
+
+
+{% block main %}
+{{ parent() }}
+
+{# #}
+<div class="row">
+	{# Student #}
+	<div class="col">
+		<h2 class="h4">Proposition(s)</h2>
+		{% for lead in entity.instance.leads %}
+		<ul class="list-group list-group-horizontal">
+
+			<li class="list-group-item">
+				<h3 class="h5">Proposition</h3>
+				{% set Objective = enum('\\App\\Config\\Objective') %}
+				→ <strong>Objectif(s)</strong> :
+				{% for objective in lead.objective %}
+				{{ objective|trans }} -
+				{% endfor %}
+				<br />
+				→ <strong>Langue(s)</strong> :
+				{% for language in lead.language %}
+				{{ language|language_name }} -
+				{% endfor %}
+				<br />
+				→ <strong>Statut</strong> :
+				{{ lead.status|trans }}
+				{% if lead.sponsorships.count > 0 %}
+			</li>
+			<li class="list-group-item">
+				<h3 class="h5">Parrainage</h3>
+				{% for sponsorship in lead.sponsorships %}
+				→ <strong>statut :</strong> {{ sponsorship.status|trans }}<br />
+				{% set p = sponsorship.proposal.person %}
+				→ <strong>Parrain :</strong> {{ p.fullName }}<br>
+				<a href="mailto:{{ p.email }}">email</a> -
+				<a href="tel:{{ p.phone }}">téléphone ({{ p.phone }})</a><br/>
+				{% endfor %}
+			</li>
+			{% endif %}
+		</ul>
+		{% endfor %}
+	</div>
+</div>
+
+
+{% endblock %}
