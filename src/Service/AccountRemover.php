@@ -43,7 +43,9 @@ final class AccountRemover
 
         // Lead
         foreach ($person->getLeads() as $lead) {
-            $this->leadWorkflow->apply($lead, 'to_archived');
+            if ($lead->getStatus() != 'archived') {
+                $this->leadWorkflow->apply($lead, 'to_archived');
+            }
             $this->anonymiseActivities($lead);
             foreach ($lead->getSponsorships() as $sponsorship) {
                 $this->anonymiseActivities($sponsorship);
