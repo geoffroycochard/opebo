@@ -26,7 +26,7 @@ class WorkflowLoggerSubscriber implements EventSubscriberInterface
 
     public function onLeaveLead(Event $event): void
     {
-        $tansitionsToLog = ['to_sponsorized', 'to_archived'];
+        $tansitionsToLog = ['to_not_satisfiable', 'to_sponsorized', 'to_archived'];
         if (in_array($event->getTransition()->getName(), $tansitionsToLog)) {
             $this->logger->logTransition($event);
         }

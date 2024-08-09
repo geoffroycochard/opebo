@@ -1,0 +1,15 @@
+{% extends "emails/layout.html.twig" %}
+{% block body %}
+    <h4>Bonjour {{ student.fullName }}!</h4>
+    <p>Nous espérons que vous allez bien.</p>
+    <p>
+        Nous avons bien reçu votre demande de parrainage et vous remercions de la confiance que vous nous accordez. 
+        Malheureusement, nous ne sommes pas en mesure de vous proposer un parrain correspondant à vos besoins spécifiques pour le moment. 
+        Nous comprenons que cela puisse être décevant et nous en sommes sincèrement désolés.
+    </p>
+    <p>
+        Toutefois, nous tenons à vous aider autant que possible. Nous vous invitons à consulter la rubrique « liens utiles » sur notre site Ôpe. 
+        Vous y trouverez des ressources précieuses qui, nous l'espérons, pourront répondre à vos attentes et vous apporter le soutien nécessaire.
+    </p>
+    <p>Merci encore pour votre compréhension et votre confiance.</p>
+{% endblock body %}

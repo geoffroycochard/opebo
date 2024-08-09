@@ -64,24 +64,24 @@ final class ActivityLogger
         );
     }
 
-    public function logEmailSuccess(Sponsorship $sponsorship, string $title, string $content)
+    public function logEmailSuccess($object, string $title, string $content)
     {
         $this->setLog(
             'email', 
-            ClassUtils::getClass($sponsorship), 
-            $sponsorship->getId(),
+            ClassUtils::getClass($object), 
+            $object->getId(),
             $title,
             $content,
             'info'
         );
     }
 
-    public function logEmailFailed(Sponsorship $sponsorship, string $title, string $content)
+    public function logEmailFailed($object, string $title, string $content)
     {
         $this->setLog(
             'email', 
-            ClassUtils::getClass($sponsorship), 
-            $sponsorship->getId(),
+            ClassUtils::getClass($object), 
+            $object->getId(),
             $title,
             $content,
             'error'

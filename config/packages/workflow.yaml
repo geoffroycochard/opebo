@@ -31,6 +31,7 @@ framework:
             initial_marking: free
             places:
                 - free
+                - not_satisfiable
                 - blocked
                 - sponsorized
                 - archived
@@ -38,6 +39,9 @@ framework:
                 to_blocked:
                     from: free
                     to: blocked
+                to_not_satisfiable:
+                    from: blocked
+                    to: not_satisfiable
                 to_free:
                     from: [blocked, archived, sponsorized]
                     to: free

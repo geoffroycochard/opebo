@@ -2,13 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use App\Config\Civility;
 use App\Config\Objective;
 use App\Entity\Request;
 use App\Entity\Sponsorship;
 use App\Repository\SponsorshipRepository;
 use App\Service\AccuracyCalculator;
 use App\Service\SponsorshipManager;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,10 +16,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
@@ -27,7 +25,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
-use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -40,6 +37,7 @@ class RequestCrudController extends AbstractCrudController
         private AdminUrlGenerator $adminUrlGenerator,
         private SponsorshipManager $sponsorshipManager,
         private TranslatorInterface $translator,
+        private EntityManagerInterface $entityManager,
         #[Target('lead')]
         private WorkflowInterface $leadWorkflow,
     ) {
@@ -91,10 +89,22 @@ class RequestCrudController extends AbstractCrudController
             })
         ;
 
+        $nonSatisfiable = Action::new('not_satisfiable')
+            ->linkToCrudAction('notSatisfiable')
+            ->addCssClass('btn-warning')
+            ->setLabel('Non satisfiable')
+            ->displayIf(static function (Request $request) {
+                return in_array($request->getStatus(), ['blocked']) && $request->getSponsorships()->count() === 0;
+            })
+        ;
+
+
         return $actions
             ->add(Crud::PAGE_INDEX, Action::DETAIL)
             ->add(Crud::PAGE_INDEX, $calculate)
             ->add(Crud::PAGE_DETAIL, $calculate)
+            ->add(Crud::PAGE_INDEX, $nonSatisfiable)
+            ->add(Crud::PAGE_DETAIL, $nonSatisfiable)
             ->remove(Crud::PAGE_INDEX, Action::NEW)
             ->update(Crud::PAGE_INDEX, Action::EDIT, function(Action $action){
                 return $action->displayIf(static function (Request $request) {
@@ -129,6 +139,14 @@ class RequestCrudController extends AbstractCrudController
     {
         $request = $context->getEntity()->getInstance();
         $this->accuracyCalculator->calculate($request);
+        return $this->redirect($this->adminUrlGenerator->setAction(Crud::PAGE_DETAIL)->setEntityId($request->getId())->generateUrl());
+    }
+
+    public function notSatisfiable(AdminContext $context)
+    {
+        $request = $context->getEntity()->getInstance();
+        $this->leadWorkflow->apply($request, 'to_not_satisfiable');
+        $this->entityManager->flush();
         return $this->redirect($this->adminUrlGenerator->setAction(Crud::PAGE_DETAIL)->setEntityId($request->getId())->generateUrl());
     }
 

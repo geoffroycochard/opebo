@@ -2,78 +2,90 @@
 
 
 {% block main %}
-	{{ parent() }}
+{{ parent() }}
 
+<div class="card">
+	<div class="card-body">
+		<h5 class="card-title">
+			<i class="fa-solid fa-cogs"></i>
+			Results
+		</h5>
+		<table class="table">
+			<tr>
+				<th>Sponsor</th>
+				<th>Status</th>
+				<th>Score</th>
+				<th>Detail</th>
+				<th></th>
+			</tr>
+			{% for sp in sponsorships %}
+			<tr>
+				<td>
+					<ul>
 
-	<div class="card">
-		<div class="card-body">
-			<h5 class="card-title">
-				<i class="fa-solid fa-cogs"></i>
-				Results
-			</h5>
-			<table class="table">
-				<tr>
-					<th>Sponsor</th>
-					<th>Status</th>
-					<th>Score</th>
-					<th>Detail</th>
-					<th></th>
-				</tr>
-				{% for sp in sponsorships %}
-					<tr>
-						<td>
+						<li>{{ sp.proposal.person.fullname }}</li>
+						<li>Objective
 							<ul>
-							
-								<li>{{ sp.proposal.person.fullname }}</li>
-								<li>Objective
-									<ul>
-										{% for o in sp.proposal.objective %}
-											<li>{{ o|trans }}</li>		
-										{% endfor %}
-									</ul>
-								</li>
-								<li>City : {{ sp.proposal.person.city }}</li>
-								<li>Languages
-									<ul>
-										{% for l in sp.proposal.language %}
-											<li>{{ l|trans }}</li>		
-										{% endfor %}
-									</ul>
-								</li>
-							</ul>
-						</td>
-						<td>{{ sp.status }}</td>
-						<td>{{ sp.score }}</td>
-						<td>
-							<ul>
-								{% set Objective = enum('\\App\\Config\\Objective') %}
-								{% for kpi, values in sp.resume %}
-									<li>{{ Objective.from(kpi)|trans }} : {{ values.total }}
-										<ul>
-											{% for k, score in values.kpis %}
-												<li>{{ k }} : {{ score }}</li>
-											{% endfor %}
-										</ul>
-									</li>
+								{% for o in sp.proposal.objective %}
+								<li>{{ o|trans }}</li>
 								{% endfor %}
 							</ul>
-						</td>
-						<td>
-							{% if workflow_can(sp, 'to_in_progress') %}
-								<a href="{{path('app_admin_request_proposal_validate', {sponsorship: sp.id})}}" class="btn btn-primary">Validate</a>
-							{% endif %}
-							{% if 'in_progress' in workflow_marked_places(sp) %}
-								{% set url = ea_url()
-                        .setController('App\\Controller\\Admin\\SponsorshipCrudController')
-                        .set('entityId', sp.id)
-                        .setAction('detail') 
-                        .generateUrl() %}
-								<a href="{{ url }}" class="btn btn-primary">Consulter</a>
-							{% endif %}
-						</td>
-					</tr>
+						</li>
+						<li>City : {{ sp.proposal.person.city }}</li>
+						<li>Languages
+							<ul>
+								{% for l in sp.proposal.language %}
+								<li>{{ l|trans }}</li>
+								{% endfor %}
+							</ul>
+						</li>
+					</ul>
+				</td>
+				<td>{{ sp.status }}</td>
+				<td>{{ sp.score }}</td>
+				<td>
+					<ul>
+						{% set Objective = enum('\\App\\Config\\Objective') %}
+						{% for kpi, values in sp.resume %}
+						<li>{{ Objective.from(kpi)|trans }} : {{ values.total }}
+							<ul>
+								{% for k, score in values.kpis %}
+								<li>{{ k }} : {{ score }}</li>
+								{% endfor %}
+							</ul>
+						</li>
+						{% endfor %}
+					</ul>
+				</td>
+				<td>
+					{% if workflow_can(sp, 'to_in_progress') %}
+					<a href="{{path('app_admin_request_proposal_validate', {sponsorship: sp.id})}}"
+						class="btn btn-primary">Validate</a>
+					{% endif %}
+					{% if 'in_progress' in workflow_marked_places(sp) %}
+					{% set url = ea_url()
+					.setController('App\\Controller\\Admin\\SponsorshipCrudController')
+					.set('entityId', sp.id)
+					.setAction('detail')
+					.generateUrl() %}
+					<a href="{{ url }}" class="btn btn-primary">Consulter</a>
+					{% endif %}
 				</td>
 			</tr>
-		{% endfor %}
-	</table>
-</div></div>{% endblock %}
+			</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+<div class="row py-5">
+	<div class="col">
+		<h2 class="h4">Activities</h2>
+		{{ render(controller(
+			'App\\Controller\\ActivityController::list', {fqcn: 'App\\Entity\\Request', id: entity.instance.id}
+		)) }}
+	</div>
+</div>
+
+{% endblock %}

@@ -146,11 +146,40 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
 
     }
 
+    /**
+     * @var TransitionEvent $event
+     */
+    public function leadToNotLatisfiable(Event $event): void
+    {
+        /** @var Sponsorship $sponsorship */
+        $request = $event->getSubject();
+        $student = $request->getPerson();
+
+        // Send poposal to student
+        $email = (new TemplatedEmail())
+        ->from($this->adminEmail)
+            ->to(new Address($student->getEmail()))
+            ->subject('Réponse à votre demande de parrainage')
+            ->htmlTemplate('emails/non_satisfiable.html.twig')
+            ->context([
+                'student' => $student
+            ])
+        ;
+        try {
+            $this->mailer->send($email);
+            $this->activityLogger->logEmailSuccess($request, 'tonotsatisfiable_student', 'Email non satisfiable de la demande vers l\'étudiant.');
+        } catch (TransportExceptionInterface $e) {
+            $this->activityLogger->logEmailFailed($request, 'tonotsatisfiable_student', 'Email non satisfiable de la demande vers l\'étudiant. ('.$e->getMessage().')');
+        }
+
+    }
+
     public static function getSubscribedEvents(): array
     {
         return [
             'workflow.sponsorship.transition.to_in_progress' => 'toInProgress',
-            'workflow.sponsorship.transition.to_ended' => 'toEnded'
+            'workflow.sponsorship.transition.to_ended' => 'toEnded',
+            'workflow.lead.transition.to_not_satisfiable' => 'leadToNotLatisfiable'
         ];
     }
 }
