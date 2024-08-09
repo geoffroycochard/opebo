@@ -9,12 +9,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
+use Symfony\Component\Intl\Languages;
 
 class ProposalCrudController extends AbstractCrudController
 {
@@ -33,6 +35,7 @@ class ProposalCrudController extends AbstractCrudController
             ,
             ChoiceField::new('language')
                 ->setFormType(LanguageType::class)
+                ->setTranslatableChoices(Languages::getNames())
                 ->setFormTypeOption('multiple', true)
             ,
             ChoiceField::new('objective')
@@ -40,7 +43,12 @@ class ProposalCrudController extends AbstractCrudController
                 ->setChoices(Objective::cases())
                 ->setFormTypeOption('multiple', true)
             ,
+            ArrayField::new('domains')
+                ->onlyOnDetail()
+                ->onlyOnIndex()
+            ,
             AssociationField::new('domains')
+                ->onlyOnForms()
                 ->setCrudController(DomainCrudController::class)
                 ->autocomplete()
         ];

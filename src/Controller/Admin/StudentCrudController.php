@@ -54,6 +54,7 @@ class StudentCrudController extends AbstractCrudController
             TextField::new('phone'),
             ChoiceField::new('nationality')
                 ->setFormType(CountryType::class)
+                ->setTranslatableChoices(Countries::getNames())
             ,
             AssociationField::new('establishment')
             ->setFormTypeOption(

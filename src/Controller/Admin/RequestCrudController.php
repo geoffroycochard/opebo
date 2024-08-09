@@ -16,6 +16,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -25,6 +26,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
+use Symfony\Component\Intl\Languages;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Workflow\WorkflowInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -60,6 +62,7 @@ class RequestCrudController extends AbstractCrudController
             ,
             ChoiceField::new('language')
                 ->setFormType(LanguageType::class)
+                ->setTranslatableChoices(Languages::getNames())
                 ->setFormTypeOption('multiple', true)
             ,
             ChoiceField::new('objective')
@@ -67,7 +70,12 @@ class RequestCrudController extends AbstractCrudController
                 ->setChoices(Objective::cases())
                 ->setFormTypeOption('multiple', true)
             ,
+            ArrayField::new('domains')
+                ->onlyOnDetail()
+                ->onlyOnIndex()
+            ,
             AssociationField::new('domains')
+                ->onlyOnForms()
                 ->setCrudController(DomainCrudController::class)
                 ->autocomplete()
         ];
