@@ -27,10 +27,16 @@ class Activity
     private ?\DateTimeInterface $datetime = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $fqcm = null;
+    private ?string $fqcn = null;
 
     #[ORM\Column]
     private ?int $entityId = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $status = 'info';
+
+    #[ORM\Column(type: Types::ARRAY, nullable: true)]
+    private ?array $user = null;
 
     public function getId(): ?int
     {
@@ -85,14 +91,14 @@ class Activity
         return $this;
     }
 
-    public function getFqcm(): ?string
+    public function getFqcn(): ?string
     {
-        return $this->fqcm;
+        return $this->fqcn;
     }
 
-    public function setFqcm(string $fqcm): static
+    public function setFqcn(string $fqcn): static
     {
-        $this->fqcm = $fqcm;
+        $this->fqcn = $fqcn;
 
         return $this;
     }
@@ -105,6 +111,30 @@ class Activity
     public function setEntityId(int $entityId): static
     {
         $this->entityId = $entityId;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(string $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getUser(): ?array
+    {
+        return $this->user;
+    }
+
+    public function setUser(?array $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

@@ -56,15 +56,10 @@ class RequestCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             // ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
-            AssociationField::new('person')->hideOnIndex(),
-            ChoiceField::new('person.civility')
-                ->setFormType(EnumType::class)
-                ->hideOnForm()
-            ,
-            TextField::new('person.city')->hideOnIndex()->hideOnForm(),
-            TextField::new('person.firstName')->hideOnForm(),
-            TextField::new('person.lastName')->hideOnForm(),
             TextField::new('status')->hideOnForm(),
+            AssociationField::new('person')
+                ->setCrudController(StudentCrudController::class)
+            ,
             ChoiceField::new('language')
                 ->setFormType(LanguageType::class)
                 ->setFormTypeOption('multiple', true)

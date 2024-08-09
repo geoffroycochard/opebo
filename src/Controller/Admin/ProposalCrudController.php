@@ -29,13 +29,8 @@ class ProposalCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('status')->hideOnForm(),
             AssociationField::new('person')
-                ->hideOnIndex()
-                ->setFormTypeOption('choice_label', function (Person $sponsor, $key, $value) {
-                    return $sponsor->getFullname();
-                })
+                ->setCrudController(SponsorCrudController::class)
             ,
-            TextField::new('person.firstName')->hideOnForm(),
-            TextField::new('person.lastName')->hideOnForm(),
             ChoiceField::new('language')
                 ->setFormType(LanguageType::class)
                 ->setFormTypeOption('multiple', true)

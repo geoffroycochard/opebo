@@ -12,10 +12,15 @@
 			<div class="card">
 				<div class="card-body">
 					<h5 class="card-title">
-						<i class="fa-solid fa-graduation-cap"></i> {{ r.person.firstName }} {{ r.person.lastName }}
+						<i class="fa-solid fa-graduation-cap"></i> {{ r.person.fullName }}
 					</h5>
-					<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-					<a href="#" class="btn btn-primary">Go somewhere</a>
+				</div>
+				<div class="card-footer text-right">
+					{% set url = ea_url()
+						.setController('App\\Controller\\Admin\\StudentCrudController')
+						.setAction('detail')
+						.setEntityId(r.id) %}
+					<a href="{{ url }}" class="btn btn-primary">Voir le profil</a>
 				</div>
 			</div>
 		</div>
@@ -27,12 +32,25 @@
 					<h5 class="card-title">
 						<i class="fa-solid fa-user"></i> {{ r.person.firstName }} {{ r.person.lastName }}
 					</h5>
-					<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-					<a href="#" class="btn btn-primary">Go somewhere</a>
+				</div>
+				<div class="card-footer text-right">
+					{% set url = ea_url()
+						.setController('App\\Controller\\Admin\\SponsorCrudController')
+						.setAction('detail')
+						.setEntityId(r.id) %}
+					<a href="{{ url }}" class="btn btn-primary">Voir le profil</a>
 				</div>
 			</div>
 		</div>
 	</div>
 
+	<div class="row py-5">
+		<div class="col">
+			<h2 class="h4">Activities</h2>
+			{{ render(controller(
+				'App\\Controller\\ActivityController::list', {fqcn: 'App\\Entity\\Sponsorship', id: entity.instance.id}
+			)) }}
+		</div>
+	</div>
 
 {% endblock %}

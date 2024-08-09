@@ -7,6 +7,7 @@ use App\Entity\Sponsor;
 use App\Entity\Student;
 use App\Entity\Sponsorship;
 use App\Repository\PersonRepository;
+use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -28,6 +29,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         private readonly PersonRepository $personRepository,
         private readonly LoginLinkHandlerInterface $loginLinkHandler,
         private readonly EntityManagerInterface $entityManager,
+        private readonly ActivityLogger $activityLogger,
         #[Target('lead')]
         private WorkflowInterface $leadWorkflow,
         #[Autowire('%admin_email%')] private string $adminEmail,
@@ -63,8 +65,9 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         ;
         try {
             $this->mailer->send($email);
+            $this->activityLogger->logEmailSuccess($sponsorship, 'inprogress_sponsor', 'Email début de parrainage vers le parrain.');
         } catch (TransportExceptionInterface $e) {
-
+            $this->activityLogger->logEmailFailed($sponsorship, 'inprogress_sponsor', 'Email début de parrainage vers le parrain. ('.$e->getMessage().')');
         }
 
         // Send poposal to student
@@ -85,7 +88,9 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         ;
         try {
             $this->mailer->send($email);
+            $this->activityLogger->logEmailSuccess($sponsorship, 'inprogress_student', 'Email début de parrainage vers l\'étudiant.');
         } catch (TransportExceptionInterface $e) {
+            $this->activityLogger->logEmailFailed($sponsorship, 'inprogress_student', 'Email début de parrainage vers l\'étudiant. ('.$e->getMessage().')');
         }
     }
 
@@ -115,7 +120,9 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         ;
         try {
             $this->mailer->send($email);
+            $this->activityLogger->logEmailSuccess($sponsorship, 'toended_sponsor', 'Email fin de parrainage vers le parrain.');
         } catch (TransportExceptionInterface $e) {
+            $this->activityLogger->logEmailFailed($sponsorship, 'toended_sponsor', 'Email fin de parrainage vers le parrain. ('.$e->getMessage().')');
 
         }
 
@@ -132,13 +139,10 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
             ])
         ;
         try {
-            $this->mailer->send($email);
+            $this->activityLogger->logEmailSuccess($sponsorship, 'toended_student', 'Email fin de parrainage vers l\'étudiant.');
         } catch (TransportExceptionInterface $e) {
+            $this->activityLogger->logEmailFailed($sponsorship, 'toended_student', 'Email fin de parrainage vers l\'étudiant. ('.$e->getMessage().')');
         }
-
-        $this->leadWorkflow->apply($sponsorship->getRequest(), 'to_archived');
-        $this->leadWorkflow->apply($sponsorship->getProposal(), 'to_free');
-        $this->entityManager->flush();
 
     }
 

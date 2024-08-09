@@ -3,12 +3,17 @@ declare(strict_types=1);
 
 namespace App\Service;
 use App\Entity\Activity;
+use App\Entity\Sponsorship;
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Workflow\Event\Event;
 
 final class ActivityLogger 
 {
     public function __construct(
-        private EntityManagerInterface $entityManager
+        private EntityManagerInterface $entityManager,
+        private Security $security
     )
     {}
 
@@ -17,19 +22,70 @@ final class ActivityLogger
         string $fqcn,
         int $entityId,
         string $title, 
-        string $content
+        string $content,
+        string $status = 'info'
     )
     {
+        $user = [];
+        if ($this->security->getUser()) {
+            $user = [
+                'email' => $this->security->getUser()->getEmail(),
+                'role' => implode(';', $this->security->getUser()->getRoles()),
+            ];
+        };
         $log = (new Activity)
             ->setTitle($title)
             ->setType($type)
             ->setEntityId($entityId)
-            ->setFqcm($fqcn)
+            ->setFqcn($fqcn)
             ->setContent($content)
             ->setDatetime(new \DateTime())
+            ->setUser($user)
         ;
         $this->entityManager->persist($log);
         $this->entityManager->flush();
+    }
+
+    public function logTransition(Event $event) 
+    {
+        $this->setLog(
+            'workflow', 
+            ClassUtils::getClass($event->getSubject()), 
+            $event->getSubject()->getId(),
+            'Transition',
+            sprintf(
+                '(id: "%s") performed transition "%s" from "%s" to "%s"',
+                $event->getSubject()->getId(),
+                $event->getTransition()->getName(),
+                implode(', ', array_keys($event->getMarking()->getPlaces())),
+                implode(', ', $event->getTransition()->getTos())
+            ),
+            'info'
+        );
+    }
+
+    public function logEmailSuccess(Sponsorship $sponsorship, string $title, string $content)
+    {
+        $this->setLog(
+            'email', 
+            ClassUtils::getClass($sponsorship), 
+            $sponsorship->getId(),
+            $title,
+            $content,
+            'info'
+        );
+    }
+
+    public function logEmailFailed(Sponsorship $sponsorship, string $title, string $content)
+    {
+        $this->setLog(
+            'email', 
+            ClassUtils::getClass($sponsorship), 
+            $sponsorship->getId(),
+            $title,
+            $content,
+            'error'
+        );
     }
 }
 

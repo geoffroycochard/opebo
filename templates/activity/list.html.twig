@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Status</th>
+                <th scope="col">Date</th>
+                <th scope="col">Type</th>
+                <th scope="col">Sujet</th>
+                <th scope="col">Message</th>
+                <th scope="col">User</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td><span class="badge text-bg-{{ log.status }} px-2 py-1 rounded-pill">{{ log.status }}</span></td>
+                        <td>{{ log.datetime|date }}</td>
+                        <td>{{ log.type }}</td>
+                        <td>{{ log.title }}</td>
+                        <td>{{ log.content }}</td>
+                        <td>
+                            {% if log.user %}
+                                {{ log.user.email }} - {{ log.user.role }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+    </div>
+</div>
+

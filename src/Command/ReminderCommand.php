@@ -6,6 +6,7 @@ use App\Entity\Sponsor;
 use App\Entity\Student;
 use App\Repository\PersonRepository;
 use App\Repository\SponsorshipRepository;
+use App\Service\ActivityLogger;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,6 +34,7 @@ class ReminderCommand extends Command
         private LoginLinkHandlerInterface $loginLinkHandler,
         private readonly MailerInterface $mailer,
         private EntityManagerInterface $entityManager,
+        private ActivityLogger $activityLogger,
         #[Autowire('%admin_email%')] private string $adminEmail,
     )
     {
@@ -51,12 +53,10 @@ class ReminderCommand extends Command
         $qb
             ->where('s.reminder < :date')
             ->andWhere('s.status = :status')
-            ->setParameter('status', 'in_progess')
+            ->setParameter('status', 'in_progress')
             ->setParameter('date', new \DateTime())
         ;
-
         $results = $qb->getQuery()->getResult();
-
         if ($results) {
             foreach ($results as $sponsorship) {
 
@@ -81,7 +81,12 @@ class ReminderCommand extends Command
                        'login_link' => $loginLink
                    ])
                ;
-               $this->mailer->send($email);
+               try {
+                   $this->mailer->send($email);
+                   $this->activityLogger->logEmailSuccess($sponsorship, 'reminder_sponsor', 'Email de rappel de parrainage vers le parrain.');
+               } catch (TransportExceptionInterface $e) {
+                   $this->activityLogger->logEmailFailed($sponsorship, 'reminder_sponsor', 'Email de rappel de parrainage vers le parrain. ('.$e->getMessage().')');
+               }
                
                
                // Send poposal to student
@@ -100,10 +105,17 @@ class ReminderCommand extends Command
                        'login_link' => $loginLink
                    ])
                ;
-               $this->mailer->send($email);
-               
+               try {
+                   $this->mailer->send($email);
+                   $this->activityLogger->logEmailSuccess($sponsorship, 'reminder_student', 'Email de rappel de parrainage vers l\'étudiant.');
+               } catch (TransportExceptionInterface $e) {
+                   $this->activityLogger->logEmailFailed($sponsorship, 'reminder_student', 'Email de rappel de parrainage vers l\'étudiant. ('.$e->getMessage().')');
+               }
             }
-        }
+            $sponsorship->setReminder((new \DateTime())->modify('+2 months'));
+            $this->entityManager->persist($sponsorship);
+            $this->entityManager->flush();
+        }   
 
         $io->success('All emails was sent.');
 
