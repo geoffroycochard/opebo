@@ -9,7 +9,9 @@ use App\Notifier\CustomLoginLinkNotification;
 use App\Repository\LeadRepository;
 use App\Repository\PersonRepository;
 use App\Repository\SponsorRepository;
+use App\Service\AccountRemover;
 use App\Service\SponsorshipManager;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Notifier\Notification\Notification;
@@ -45,7 +47,7 @@ class FrontendController extends AbstractController
                 $notifier->send(new Notification(sprintf('Impossible de trouver ce compte : %s.', $email), ['browser']));
                 return $this->render('frontend/request_login_link.html.twig');
             }
-            
+
             // create a login link for $user this returns an instance
             // of LoginLinkDetails
             $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
@@ -74,12 +76,25 @@ class FrontendController extends AbstractController
     #[Route('/app', name: 'app_frontend_dashboard')]
     public function dashboard(Request $request, PersonRepository $personRepository, LeadRepository $leadRepository): Response
     {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED');
         /** @var Person $person */
         $person = $this->getUser();
         $type = get_class($person);
 
+        
+        $canDelete = true;
+        foreach ($person->getLeads() as $lead) {
+            foreach ($lead->getSponsorships() as $sponsoship) {
+                if ($sponsoship->getStatus() === 'in_progress') {
+                    $canDelete = false;
+                }
+            }
+        }
+
+        //dd($canDelete);
         return $this->render('frontend/dashboard.html.twig', [
             'person' => $person,
+            'canDelete' => $canDelete,
             'type' => $type
         ]);
     }
@@ -102,5 +117,21 @@ class FrontendController extends AbstractController
 
 
         return $this->redirectToRoute('app_frontend_dashboard');
+    }
+
+    #[Route('/app/delete', name: 'app_frontend_delete')]
+    public function deleteAccount(
+        AccountRemover $accountRemover,
+        NotifierInterface $notifier,
+        Security $security
+    )
+    {
+        /** @var Person $person */
+        $person = $this->getUser();
+        $accountRemover->remove($person);
+        $security->logout(false);
+        $notifier->send(new Notification('Votre compte a été supprimé.', ['browser']));
+
+        return $this->redirectToRoute('app_frontend_login');
     }
 }

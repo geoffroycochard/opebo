@@ -1,6 +1,10 @@
 {# templates/security/request_login_link.html.twig #}
 {% extends 'frontend.html.twig' %}
 
+{% block title %}
+	Se connecter - {{ parent() }}
+{% endblock title %}
+
 {% block body %}
 	<div class="alert alert-info alert-dismissible fade show mt-5">
 		Un lien de connexion a été envoyé sur votre adresse email afin de vous connecter.

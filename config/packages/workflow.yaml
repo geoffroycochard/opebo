@@ -49,5 +49,5 @@ framework:
                     from: [blocked, archived]
                     to: sponsorized
                 to_archived:
-                    from: sponsorized
+                    from: [sponsorized, not_satisfiable, free, 'archived']
                     to: archived

@@ -1,129 +1,132 @@
 {% extends 'frontend.html.twig' %}
 
-{% block title %}Hello FrontendController!
-{% endblock %}
+{% block title %}
+	Tableau de bord - {{ parent() }}
+{% endblock title %}
 
 {% block body %}
 <div class="col-xl-12 col-lg-12 col-md-12 col-12 pb-4">
 	<div class="d-flex align-items-center justify-content-between pt-4 pb-6">
-		<div class="d-flex align-items-center">
-			<div class="lh-1">
-				<h2 class="mb-0">{{ person.fullName }} <a href="#!" class="text-decoration-none"> </a></h2>
-				<p class="mb-0 d-block">{{ person.email }}</p>
-			</div>
+		<div class="lh-1">
+			<h2 class="mb-0">{{ person.fullName }} <a href="#!" class="text-decoration-none"> </a></h2>
+			<p class="mb-0 d-block">{{ person.email }}</p>
 		</div>
+		{% if canDelete %}
+			<a href="{{ path('app_frontend_delete') }}" class="btn btn-danger">Supprimer son compte</a>
+		{% endif %}
 	</div>
 </div>
-<div class="row">
-	<div class="col">
+<div class="row gy-5">
 
-		{% for message in app.flashes('notification') %}
+	{% for message in app.flashes('notification') %}
+	<div class="col-12">
 		<div class="alert alert-info alert-dismissible fade show">
 			{{ message }}
 			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><span
 					aria-hidden="true">&times;</span></button>
 		</div>
-		{% endfor %}
-
-		{% set isStudent = type == 'App\\Entity\\Student' %}
+	</div>
+	{% endfor %}
+	{% set isStudent = type == 'App\\Entity\\Student' %}
+	<div class="col-12">
 		<div class="card">
-			<div class="card-body my-3">
-				<div class="d-flex align-items-start">
-					<div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist"
-						aria-orientation="vertical">
-						<button class="nav-link active" data-bs-toggle="pill" data-bs-target="#profil" type="button"
-							role="tab" aria-controls="profil" aria-selected="true">Profile</button>
-							<button class="nav-link" data-bs-toggle="pill" data-bs-target="#sponsorship" type="button"
-								role="tab" aria-controls="lead" aria-selected="true">Parrainage(s)</button>
-						<button class="nav-link " data-bs-toggle="pill" data-bs-target="#lead" type="button" role="tab"
-							aria-controls="lead" aria-selected="true">Demande(s)</button>
+			<h2 class="h5 card-header">Votre profile</h2>
+			<div class="card-body">
+				<div class="row row-cols-3">
+					<div class="col mb-5">
+						<h6 class="fs-5 ls-2">Téléphone</h6>
+						<p class="mb-0">{{ person.phone }}</p>
 					</div>
-					<div class="tab-content mx-5">
-						<div class="tab-pane fade show active" id="profil" role="tabpanel"
-							aria-labelledby="profile-tab">
-							<div class="row row-cols-3">
-								<div class="col mb-5">
-									<h6 class="fs-5 ls-2">Téléphone</h6>
-									<p class="mb-0">{{ person.phone }}</p>
-								</div>
-								<div class="col mb-5">
-									<h6 class="fs-5 ls-2">Date de naissance</h6>
-									<p class="mb-0">{{ person.birthdate|date('d/m/Y') }}</p>
-								</div>
-								<div class="col mb-5">
-									<h6 class="fs-5 ls-2">Email</h6>
-									<p class="mb-0">{{ person.email }}</p>
-								</div>
-								<div class="col mb-5">
-									<h6 class="fs-5 ls-2">Ville</h6>
-									<p class="mb-0">{{ person.city.name }}</p>
-								</div>
-								<div class="col mb-5">
-									<h6 class="fs-5 ls-2">Nationnalité</h6>
-									<p class="mb-0">{{ person.nationality|country_name }}</p>
-								</div>
-								{% if isStudent %}
-								<div class="col">
-									<h6 class="fs-5 ls-2">Établissement</h6>
-									<p class="mb-0">{{ person.establishment.name }}</p>
-								</div>
-								<div class="col">
-									<h6 class="fs-5 ls-2">Niveau d'étude</h6>
-									<p class="mb-0">{{ person.studyLevel }}</p>
-								</div>
-								{% endif %}
-							</div>
-						</div>
-						<div class="tab-pane fade" id="lead" role="tabpanel" aria-labelledby="messages-tab">
-							<ul class="list-group list-group-flush">
-								{% for lead in person.leads %}
-								<li class="list-group-item">
-									→ <strong>Objectif(s)</strong> :
-									{% for objective in lead.objective %}
-										{{ objective|trans }} -
-									{% endfor %}
-									<br />
-									→ <strong>Langue(s)</strong> :
-									{% for language in lead.language %}
-										{{ language|language_name }} -
-									{% endfor %}
-									<br />
-									→ <strong>Statut</strong> :
-									{{ lead.status|trans }}
-								</li>
-								{% endfor %}
-							</ul>
-						</div>
-						<div class="tab-pane fade" id="sponsorship" role="tabpanel" aria-labelledby="settings-tab">
-							<ul class="list-group list-group-flush">
-								{% for lead in person.leads %}
-								{% if lead.sponsorships.count > 0 %}
-									<li class="list-group-item">
-										{% for sponsorship in lead.sponsorships %}
-											→ <strong>statut :</strong> {{ sponsorship.status|trans }}<br />
-											{% if isStudent == false %}
-												{% set p = sponsorship.request.person %}
-												{% set label = 'Votre filleul' %}
-											{% endif %}
-											{% if isStudent %}
-												{% set p = sponsorship.proposal.person %}
-												{% set label = 'Votre parrain ' %}
-											{% endif %}
-												→ <strong>{{ label }} :</strong> {{ p.fullName }}<br>
-												<a href="mailto:{{ p.email }}">email</a> - 
-												<a href="tel:{{ p.phone }}">téléphone ({{ p.phone }})</a><br>
-												{% if workflow_can(sponsorship, 'to_ended') %}
-													<a href="{{ path('app_frontend_sponsorship_back', {sponsorship: sponsorship.id, transition: 'to_ended' }) }}" class="btn btn-warning my-3" onclick="return confirm('Êtes-vous sûr de vouloir mettre fin au parrainage en cours')">Mettre fin au parrainage</a>
-												{% endif %}
-										{% endfor %}
-									</li>
-								{% endif %}
-								{% endfor %}
-							</ul>
-						</div>
+					<div class="col mb-5">
+						<h6 class="fs-5 ls-2">Date de naissance</h6>
+						<p class="mb-0">{{ person.birthdate|date('d/m/Y') }}</p>
 					</div>
+					<div class="col mb-5">
+						<h6 class="fs-5 ls-2">Email</h6>
+						<p class="mb-0">{{ person.email }}</p>
+					</div>
+					<div class="col mb-5">
+						<h6 class="fs-5 ls-2">Ville</h6>
+						<p class="mb-0">{{ person.city.name }}</p>
+					</div>
+					<div class="col mb-5">
+						<h6 class="fs-5 ls-2">Nationnalité</h6>
+						<p class="mb-0">{{ person.nationality|country_name }}</p>
+					</div>
+					{% if isStudent %}
+					<div class="col">
+						<h6 class="fs-5 ls-2">Établissement</h6>
+						<p class="mb-0">{{ person.establishment.name }}</p>
+					</div>
+					<div class="col">
+						<h6 class="fs-5 ls-2">Niveau d'étude</h6>
+						<p class="mb-0">{{ person.studyLevel }}</p>
+					</div>
+					{% endif %}
 				</div>
 			</div>
+		</div>
+	</div>
+	<div class="col-lg-6">
+		<div class="card">
+			<h2 class="h5 card-header">Parrainage(s)</h2>
+			<div class="card-body">
+				<ul class="list-group list-group-flush">
+					{% for lead in person.leads %}
+						{% if lead.sponsorships.count > 0 %}
+							<li class="list-group-item">
+								{% for sponsorship in lead.sponsorships %}
+									→ <strong>statut :</strong> {{ sponsorship.status|trans }}<br />
+									{% if isStudent == false %}
+										{% set p = sponsorship.request.person %}
+										{% set label = 'Votre filleul' %}
+									{% endif %}
+									{% if isStudent %}
+										{% set p = sponsorship.proposal.person %}
+										{% set label = 'Votre parrain ' %}
+									{% endif %}
+										→ <strong>{{ label }} :</strong> {{ p.fullName }}<br>
+										<a href="mailto:{{ p.email }}">email</a> - 
+										<a href="tel:{{ p.phone }}">téléphone ({{ p.phone }})</a><br>
+										{% if workflow_can(sponsorship, 'to_ended') %}
+											<a href="{{ path('app_frontend_sponsorship_back', {sponsorship: sponsorship.id, transition: 'to_ended' }) }}" class="btn btn-warning my-3" onclick="return confirm('Êtes-vous sûr de vouloir mettre fin au parrainage en cours')">Mettre fin au parrainage</a>
+										{% endif %}
+								{% endfor %}
+							</li>
+						{% else %}
+							<li class="list-group-item"><span class="badge text-bg-warning">Aucun</span></li>
+						{% endif %}
+					{% endfor %}
+				</ul>
+			</div>
+
+		</div>
+	</div>
+	<div class="col-lg-6">
+		<div class="card">
+			<h2 class="h5 card-header">Demande(s) / Propisition(s)</h2>
+			<div class="card-body">
+				<ul class="list-group list-group-flush">
+					<li class="list-group-item">
+						{% for lead in person.leads %}
+						<li class="list-group-item">
+							→ <strong>Objectif(s)</strong> :
+							{% for objective in lead.objective %}
+								{{ objective|trans }} -
+							{% endfor %}
+							<br />
+							→ <strong>Langue(s)</strong> :
+							{% for language in lead.language %}
+								{{ language|language_name }} -
+							{% endfor %}
+							<br />
+							→ <strong>Statut</strong> :
+							{{ lead.status|trans }}
+						</li>
+						{% endfor %}
+				</ul>
+			</div>
+
 		</div>
 	</div>
 </div>

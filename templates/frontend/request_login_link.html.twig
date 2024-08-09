@@ -1,9 +1,11 @@
 {# templates/security/request_login_link.html.twig #}
 {% extends 'frontend.html.twig' %}
 
+{% block title %}
+	Se connecter - {{ parent() }}
+{% endblock title %}
+
 {% block body %}
-
-
 {% for message in app.flashes('notification') %}
 <div class="alert alert-warning alert-dismissible fade show mt-5">
 	{{ message }}

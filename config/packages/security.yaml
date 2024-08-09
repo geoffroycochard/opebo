@@ -32,9 +32,12 @@ security:
                 - App\Security\ApiKeyAuthenticator
         app:
             pattern: ^/app
+            logout:
+                target: app_frontend_login
             login_link:
                 check_route: app_frontend_login_check
                 signature_properties: ['id']
+                login_path: app_frontend_login
                 success_handler: App\Security\Authentication\AuthenticationSuccessHandler
             # security: true
             provider: person_user
