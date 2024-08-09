@@ -16,7 +16,7 @@
 		{% endif %}
 	</div>
 </div>
-<div class="row gy-5">
+<div class="row gy-4">
 
 	{% for message in app.flashes('notification') %}
 	<div class="col-12">
@@ -34,32 +34,32 @@
 			<div class="card-body">
 				<div class="row row-cols-3">
 					<div class="col mb-5">
-						<h6 class="fs-5 ls-2">Téléphone</h6>
+						<h6 class="fs-7 ls-2">→ Téléphone</h6>
 						<p class="mb-0">{{ person.phone }}</p>
 					</div>
 					<div class="col mb-5">
-						<h6 class="fs-5 ls-2">Date de naissance</h6>
+						<h6 class="fs-7 ls-2">→ Date de naissance</h6>
 						<p class="mb-0">{{ person.birthdate|date('d/m/Y') }}</p>
 					</div>
 					<div class="col mb-5">
-						<h6 class="fs-5 ls-2">Email</h6>
+						<h6 class="fs-7 ls-2">→ Email</h6>
 						<p class="mb-0">{{ person.email }}</p>
 					</div>
 					<div class="col mb-5">
-						<h6 class="fs-5 ls-2">Ville</h6>
+						<h6 class="fs-7 ls-2">→ Ville</h6>
 						<p class="mb-0">{{ person.city.name }}</p>
 					</div>
 					<div class="col mb-5">
-						<h6 class="fs-5 ls-2">Nationnalité</h6>
+						<h6 class="fs-7 ls-2">→ Nationnalité</h6>
 						<p class="mb-0">{{ person.nationality|country_name }}</p>
 					</div>
 					{% if isStudent %}
 					<div class="col">
-						<h6 class="fs-5 ls-2">Établissement</h6>
+						<h6 class="fs-7 ls-2">→ Établissement</h6>
 						<p class="mb-0">{{ person.establishment.name }}</p>
 					</div>
 					<div class="col">
-						<h6 class="fs-5 ls-2">Niveau d'étude</h6>
+						<h6 class="fs-7 ls-2">→ Niveau d'étude</h6>
 						<p class="mb-0">{{ person.studyLevel }}</p>
 					</div>
 					{% endif %}
