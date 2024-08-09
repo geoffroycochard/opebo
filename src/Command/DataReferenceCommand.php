@@ -89,10 +89,10 @@ class DataReferenceCommand extends Command
                 }
             }
 
-            $k = array_merge($k, $t);
+            $k = array_merge($k, array_map(fn($n) => strtolower(trim($n)), $t));
         }
 
-        $k = array_filter(array_map('trim', $k));
+        $k = array_filter($k);
         $k = array_unique($k);
         
         foreach ($k as $kw) {
