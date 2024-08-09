@@ -23,8 +23,7 @@ after('deploy:failed', 'deploy:unlock');
 task('restart:php-fpm', function () {
     run('sudo systemctl restart php8.2-fpm.service');
 });
-
-// after('deploy:symlink', 'restart:php-fpm');
+after('deploy:symlink', 'restart:php-fpm');
 
 task('test', function () {
     run('cd /var/www/html/ORLEANS/ORLEANS-METROPOLE/dev.orleans-metropole.fr/Root-TYPO3/current 2>/dev/null || cd /var/www/html/ORLEANS/ORLEANS-METROPOLE/dev.orleans-metropole.fr/Root-TYPO3;echo "yo";');
