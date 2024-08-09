@@ -42,8 +42,8 @@ class RequestCrudController extends AbstractCrudController
         private EntityManagerInterface $entityManager,
         #[Target('lead')]
         private WorkflowInterface $leadWorkflow,
-    ) {
-    }
+    ) 
+    {}
 
 
     public static function getEntityFqcn(): string
@@ -56,7 +56,10 @@ class RequestCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             // ChoiceField::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()),
-            TextField::new('status')->hideOnForm(),
+            ChoiceField::new('status')
+                ->setChoices($this->leadWorkflow->getDefinition()->getPlaces())
+                ->hideOnForm()
+            ,
             AssociationField::new('person')
                 ->setCrudController(StudentCrudController::class)
             ,

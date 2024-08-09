@@ -51,7 +51,10 @@ class SponsorshipCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            TextField::new('status')->hideOnForm(),
+            ChoiceField::new('status')
+                ->setChoices($this->sponsorshipWorkflow->getDefinition()->getPlaces())
+                ->hideOnForm()
+            ,
             AssociationField::new('request.person')
                 ->setCrudController(StudentCrudController::class)
                 ->hideOnForm()

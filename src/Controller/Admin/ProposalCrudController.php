@@ -14,12 +14,20 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
 use Symfony\Component\Intl\Languages;
+use Symfony\Component\Workflow\WorkflowInterface;
 
 class ProposalCrudController extends AbstractCrudController
 {
+    public function __construct(
+        #[Target('lead')]
+        private WorkflowInterface $leadWorkflow,
+    )
+    {}
+
     public static function getEntityFqcn(): string
     {
         return Proposal::class;
@@ -29,7 +37,10 @@ class ProposalCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            TextField::new('status')->hideOnForm(),
+            ChoiceField::new('status')
+                ->setChoices($this->leadWorkflow->getDefinition()->getPlaces())
+                ->hideOnForm()
+            ,
             AssociationField::new('person')
                 ->setCrudController(SponsorCrudController::class)
             ,
