@@ -41,6 +41,11 @@ class FrontendController extends AbstractController
             // load the user in some way (e.g. using the form input)
             $email = $request->getPayload()->get('email');
             $user = $userRepository->findOneBy(['email' => $email]);
+            if (!$user) {
+                $notifier->send(new Notification(sprintf('Impossible de trouver ce compte : %s.', $email), ['browser']));
+                return $this->render('frontend/request_login_link.html.twig');
+            }
+            
             // create a login link for $user this returns an instance
             // of LoginLinkDetails
             $loginLinkDetails = $loginLinkHandler->createLoginLink($user);
