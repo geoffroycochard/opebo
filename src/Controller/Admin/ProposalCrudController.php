@@ -3,17 +3,21 @@
 namespace App\Controller\Admin;
 
 use App\Config\Objective;
+use App\Config\PersonStatus;
 use App\Entity\Person;
 use App\Entity\Proposal;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\LanguageType;
@@ -80,14 +84,25 @@ class ProposalCrudController extends AbstractCrudController
         ;
     }
 
-    /*
-    public function configureFields(string $pageName): iterable
+    public function configureCrud(Crud $crud): Crud
     {
-        return [
-            IdField::new('id'),
-            TextField::new('title'),
-            TextEditorField::new('description'),
-        ];
+        return $crud
+            ->setSearchFields(['person.lastname', 'person.firstname'])
+        ;
     }
-    */
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(
+                ChoiceFilter::new('status')
+                    ->setChoices($this->leadWorkflow->getDefinition()->getPlaces())
+                )
+            ->add(
+                ArrayFilter::new('objective')
+                    ->setChoices(array_column(Objective::cases(), 'value', 'name'))
+                )
+            ->add('domains')
+        ;
+    }
 }

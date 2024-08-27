@@ -21,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
@@ -88,6 +89,7 @@ class RequestCrudController extends AbstractCrudController
     {
         return $crud
             ->overrideTemplate('crud/detail', 'admin/crud/request/detail.html.twig')
+            ->setSearchFields(['person.lastname', 'person.firstname'])
         ;
     }
 
@@ -130,9 +132,18 @@ class RequestCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(ChoiceFilter::new('status')->setChoices($this->leadWorkflow->getDefinition()->getPlaces()))
+            ->add(
+                ChoiceFilter::new('status')
+                    ->setChoices($this->leadWorkflow->getDefinition()->getPlaces())
+                )
+            ->add(
+                ArrayFilter::new('objective')
+                    ->setChoices(array_column(Objective::cases(), 'value', 'name'))
+                )
+            ->add('domains')
         ;
     }
+
     public function configureResponseParameters(KeyValueStore $responseParameters): KeyValueStore
     {
         if (Crud::PAGE_DETAIL === $responseParameters->get('pageName')) {
