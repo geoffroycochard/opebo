@@ -34,7 +34,7 @@ class Sponsor extends Person
      * @return string[]
      */
     public function getRoles(): array {
-        return ['ROLE_PERSON'];
+        return ['ROLE_PERSON', 'ROLE_SPONSOR'];
     }
     
     /**
