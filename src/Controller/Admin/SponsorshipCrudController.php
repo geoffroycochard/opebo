@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Config\Objective;
 use App\Entity\Proposal;
 use App\Entity\Request;
 use App\Entity\Sponsorship;
@@ -12,6 +13,7 @@ use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -20,6 +22,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ArrayFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -44,6 +48,14 @@ class SponsorshipCrudController extends AbstractCrudController
     {
         return $crud
             ->overrideTemplate('crud/detail', 'admin/crud/sponsorship/detail.html.twig')
+            ->setSearchFields(
+                [
+                    'request.person.lastname', 
+                    'request.person.firstname', 
+                    'proposal.person.lastname', 
+                    'proposal.person.firstname'
+                ]
+            )
         ;
     }
 
@@ -112,6 +124,16 @@ class SponsorshipCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_INDEX, Action::DELETE)
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
             ->remove(Crud::PAGE_INDEX, Action::EDIT)
+        ;
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(
+                ChoiceFilter::new('status')
+                    ->setChoices($this->sponsorshipWorkflow->getDefinition()->getPlaces())
+                )
         ;
     }
 
