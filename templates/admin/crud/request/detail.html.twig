@@ -8,11 +8,11 @@
 	<div class="card-body">
 		<h5 class="card-title">
 			<i class="fa-solid fa-cogs"></i>
-			Results
+			Résultats
 		</h5>
 		<table class="table">
 			<tr>
-				<th>Sponsor</th>
+				<th>Parrain</th>
 				<th>Status</th>
 				<th>Score</th>
 				<th>Detail</th>
@@ -21,21 +21,28 @@
 			{% for sp in sponsorships %}
 			<tr>
 				<td>
-					<ul>
+					<ul class="list-unstyled">
 
 						<li>{{ sp.proposal.person.fullname }}</li>
-						<li>Objective
+						<li>Objectifs :
 							<ul>
 								{% for o in sp.proposal.objective %}
 								<li>{{ o|trans }}</li>
 								{% endfor %}
 							</ul>
 						</li>
-						<li>City : {{ sp.proposal.person.city }}</li>
-						<li>Languages
+						<li>Ville : {{ sp.proposal.person.city }}</li>
+						<li>Langue :
 							<ul>
 								{% for l in sp.proposal.language %}
 								<li>{{ l|trans }}</li>
+								{% endfor %}
+							</ul>
+						</li>
+						<li>Domaines :
+							<ul>
+								{% for l in sp.proposal.domains %}
+								<li>{{ l }}</li>
 								{% endfor %}
 							</ul>
 						</li>

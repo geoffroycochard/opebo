@@ -43,8 +43,8 @@ class RequestCrudController extends AbstractCrudController
         private EntityManagerInterface $entityManager,
         #[Target('lead')]
         private WorkflowInterface $leadWorkflow,
-    ) 
-    {}
+    ) {
+    }
 
 
     public static function getEntityFqcn(): string
@@ -64,6 +64,9 @@ class RequestCrudController extends AbstractCrudController
             AssociationField::new('person')
                 ->setCrudController(StudentCrudController::class)
             ,
+            TextField::new('person.city')
+                ->onlyOnDetail()
+            ,
             ChoiceField::new('language')
                 ->setFormType(LanguageType::class)
                 ->setTranslatableChoices(Languages::getNames())
@@ -74,14 +77,13 @@ class RequestCrudController extends AbstractCrudController
                 ->setChoices(Objective::cases())
                 ->setFormTypeOption('multiple', true)
             ,
-            ArrayField::new('domains')
-                ->onlyOnDetail()
-                ->onlyOnIndex()
-            ,
             AssociationField::new('domains')
                 ->onlyOnForms()
                 ->setCrudController(DomainCrudController::class)
                 ->autocomplete()
+            ,
+            ArrayField::new('domains')
+                ->hideOnForm()
         ];
     }
 
@@ -118,8 +120,8 @@ class RequestCrudController extends AbstractCrudController
             ->add(Crud::PAGE_DETAIL, $calculate)
             ->add(Crud::PAGE_INDEX, $nonSatisfiable)
             ->add(Crud::PAGE_DETAIL, $nonSatisfiable)
-            ->remove(Crud::PAGE_INDEX, Action::NEW)
-            ->update(Crud::PAGE_INDEX, Action::EDIT, function(Action $action){
+            ->remove(Crud::PAGE_INDEX, Action::NEW )
+            ->update(Crud::PAGE_INDEX, Action::EDIT, function (Action $action) {
                 return $action->displayIf(static function (Request $request) {
                     return in_array($request->getStatus(), ['free']);
                 });
@@ -128,18 +130,18 @@ class RequestCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_DETAIL, Action::DELETE)
         ;
     }
-    
+
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
             ->add(
                 ChoiceFilter::new('status')
                     ->setChoices($this->leadWorkflow->getDefinition()->getPlaces())
-                )
+            )
             ->add(
                 ArrayFilter::new('objective')
                     ->setChoices(array_column(Objective::cases(), 'value', 'name'))
-                )
+            )
             ->add('domains')
         ;
     }
@@ -183,6 +185,6 @@ class RequestCrudController extends AbstractCrudController
                 ->setController(SponsorshipCrudController::class)
                 ->setEntityId($sponsorship->getId())
                 ->generateUrl()
-            );
+        );
     }
 }

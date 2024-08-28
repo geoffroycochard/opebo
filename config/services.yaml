@@ -29,4 +29,10 @@ services:
 
     App\Command\ReminderCommand:
         arguments:
-            $loginLinkHandler: '@security.authenticator.login_link_handler.app'            
+            $loginLinkHandler: '@security.authenticator.login_link_handler.app'    
+
+    App\Service\Domain\Synonym:
+        arguments:
+            $databaseUrl: '%env(resolve:DATABASE_URL_SYNONYM)%'
+            
+                

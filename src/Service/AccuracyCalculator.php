@@ -9,6 +9,7 @@ use App\Entity\Request;
 use App\Entity\Sponsorship;
 use App\Repository\ProposalRepository;
 use App\Repository\SponsorshipRepository;
+use App\Service\Domain\Calculator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -22,7 +23,8 @@ final class AccuracyCalculator
         #[Target('sponsorship')]
         private WorkflowInterface $sponsorshipWorkflow,
         #[Target('lead')]
-        private WorkflowInterface $leadWorkflow
+        private WorkflowInterface $leadWorkflow,
+        private Calculator $domainCalculator
     ) {
     }
 
@@ -140,6 +142,9 @@ final class AccuracyCalculator
             ],
         ];
 
+        // Prepare synomyn searching
+        $this->domainCalculator->setSource($search['domain']);
+
         $score = [];
         foreach ($dataset as $proposalId => $data) {
             $resume = [];
@@ -150,6 +155,7 @@ final class AccuracyCalculator
                 $totalObjective = 0;
                 foreach ($localKpis as $kpi => $boost) {
                     $s = 0;
+                    // Score for location
                     if ($kpi === 'location') {
                         $diameter = 60000; // 30km arround orléans
                         $distance = $this->getDistance(
@@ -159,6 +165,20 @@ final class AccuracyCalculator
                             $search[$kpi]['lng']
                         );
                         $s = round((($diameter - $distance) / 10000) * $boost);
+                    } 
+                    // Score for Domain                  
+                    elseif ($kpi === 'domain') {
+                        $this->domainCalculator->setCompare($data['domain']);
+                        $s = $this->domainCalculator->scoring($boost);
+                    } 
+                    // Score for Domain                  
+                    elseif ($kpi === 'gender') {
+                        $intersect = array_intersect($data[$kpi], $search[$kpi]);
+                        $s = count($intersect) * $boost;
+                        // Spec Sponsor M && Student F
+                        if ($search['gender'][0] === 'female' && $data['gender'][0] === 'male') {
+                            $s = -10000;
+                        }
                     } else {
                         $intersect = array_intersect($data[$kpi], $search[$kpi]);
                         $s = count($intersect) * $boost;
@@ -180,7 +200,7 @@ final class AccuracyCalculator
             return $a['score'] <= $b['score'];
         });
 
-        $score = array_slice($score, 0, 5, true);
+        $score = array_slice($score, 0, 10, true);
 
         $initialPlace = $this->sponsorshipWorkflow->getDefinition()->getInitialPlaces();
         $initialPlace = array_pop($initialPlace);
