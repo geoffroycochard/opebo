@@ -91,7 +91,7 @@ class RequestCrudController extends AbstractCrudController
     {
         return $crud
             ->overrideTemplate('crud/detail', 'admin/crud/request/detail.html.twig')
-            ->setSearchFields(['person.lastname', 'person.firstname'])
+            ->setSearchFields(['person.lastname', 'person.firstname', 'domains.name'])
         ;
     }
 

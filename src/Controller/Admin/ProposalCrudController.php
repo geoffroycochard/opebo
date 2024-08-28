@@ -87,7 +87,7 @@ class ProposalCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setSearchFields(['person.lastname', 'person.firstname'])
+            ->setSearchFields(['person.lastname', 'person.firstname', 'domains.name'])
         ;
     }
 
