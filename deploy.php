@@ -10,10 +10,18 @@ set('repository', 'git@github.com:geoffroycochard/opebo.git');
 set('git_tty', true);
 
 // Hosts
-host('staging.vom')
+host('staging   ')
     ->set('hostname', '195.154.186.13')
     ->set('remote_user', 'ADMIN-OPE')
     ->set('deploy_path', '/var/www/html/ORLEANS/ADMIN-OPE/dev-admin-ope.orleans.fr/Root-SYMFONY')
+    ->setForwardAgent(true)
+;
+
+// Hosts
+host('prod')
+    ->set('hostname', '195.154.186.14')
+    ->set('remote_user', 'ADMIN-OPE')
+    ->set('deploy_path', '/var/www/html/ORLEANS/ADMIN-OPE/admin-ope.orleans-metropole.fr/Root-SYMFONY')
     ->setForwardAgent(true)
 ;
 
