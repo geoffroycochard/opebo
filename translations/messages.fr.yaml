@@ -8,7 +8,7 @@ app:
     es: Espagnol
     cn: Chinois
   objective:
-    acc: 'Hébergement'
+    acc: 'Aide à la recherche de logement'
     adm: 'Accompagnement administratif'
     exc: 'Echange convivial'
     hfi: 'Aide à la recherche un stage'

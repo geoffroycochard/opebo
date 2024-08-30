@@ -8,7 +8,7 @@ app:
     es: Spanish
     cn: Chinese
   objective:
-    acc: 'Accomodation'
+    acc: 'Help finding accommodation'
     adm: 'Administrative support'
     exc: 'Friendly exchange'
     hfi: 'Help finding internship'
