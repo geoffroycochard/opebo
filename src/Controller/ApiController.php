@@ -225,7 +225,7 @@ class ApiController extends AbstractController
         EntityManagerInterface $entityManager
     ): ?Response
     {  
-        // Find person
+        // Find person,
         $personClass = 'App\\Entity\\'.ucfirst($register->type);
         /** @var Student|Sponsor $person */
         $person = $personRepository->findOneBy(['email' => $register->email]) ?? new $personClass;
@@ -274,6 +274,12 @@ class ApiController extends AbstractController
 
         // Languages
         $lead->setLanguage(array_filter( explode(',', $register->languages)));
+
+        // Domains
+        $domains = explode(',', $register->domains);
+        foreach ($domains as $domainId) {
+            $lead->addDomain($domainRepository->find($domainId));
+        }
 
         // Status
         $lead->setStatus('free');
