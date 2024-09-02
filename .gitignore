@@ -118,3 +118,5 @@ node_modules
 /traefik/certs/opebo.key
 /xhprof/xhprof_prepend.php
 /**/README.*
+
+*.sql

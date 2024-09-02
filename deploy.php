@@ -10,7 +10,7 @@ set('repository', 'git@github.com:geoffroycochard/opebo.git');
 set('git_tty', true);
 
 // Hosts
-host('staging   ')
+host('staging')
     ->set('hostname', '195.154.186.13')
     ->set('remote_user', 'ADMIN-OPE')
     ->set('deploy_path', '/var/www/html/ORLEANS/ADMIN-OPE/dev-admin-ope.orleans.fr/Root-SYMFONY')
@@ -29,7 +29,8 @@ host('prod')
 after('deploy:failed', 'deploy:unlock');
 
 task('restart:php-fpm', function () {
-    run('reloadphp82');
+    run('sudo systemctl restart php8.2-fpm.service');
+    // run('reloadphp82');
 });
 // after('deploy:symlink', 'restart:php-fpm');
 
