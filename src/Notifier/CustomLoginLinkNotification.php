@@ -6,6 +6,7 @@ namespace App\Notifier;
 
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Notifier\Message\EmailMessage;
 use Symfony\Component\Notifier\Recipient\EmailRecipientInterface;
 use Symfony\Component\Security\Http\LoginLink\LoginLinkDetails;
@@ -32,7 +33,7 @@ class CustomLoginLinkNotification extends LoginLinkNotification
 
         $email = (new TemplatedEmail())
         ->from('ope@orleans-metropole.fr')
-            ->to($recipient->getEmail())
+            ->to(new Address($recipient->getEmail(), 'Ôpe'))
             ->subject('Connexion à votre compte')
             ->htmlTemplate('emails/login_link_email.html.twig')
             ->context([

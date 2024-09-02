@@ -53,7 +53,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         $loginLink = $loginLinkDetails->getUrl();
         $email = (new TemplatedEmail())
             ->from($this->adminEmail)
-            ->to(new Address($sponsor->getEmail()))
+            ->to(new Address($sponsor->getEmail(), 'Ôpe'))
             ->subject('Votre parrainage a commencé !')
             ->htmlTemplate('emails/inprogress/sponsor.html.twig')
             ->context([
@@ -76,7 +76,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         $loginLink = $loginLinkDetails->getUrl();
         $email = (new TemplatedEmail())
         ->from($this->adminEmail)
-            ->to(new Address($student->getEmail()))
+            ->to(new Address($student->getEmail(), 'Ôpe'))
             ->subject('Votre demande d\'accompagnement a commencé')
             ->htmlTemplate('emails/inprogress/student.html.twig')
             ->context([
@@ -109,7 +109,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         // Send info to sponsor
         $email = (new TemplatedEmail())
             ->from($this->adminEmail)
-            ->to(new Address($sponsor->getEmail()))
+            ->to(new Address($sponsor->getEmail(), 'Ôpe'))
             ->subject('Votre parrainage est terminé')
             ->htmlTemplate('emails/ended/sponsor.html.twig')
             ->context([
@@ -129,7 +129,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         // Send poposal to student
         $email = (new TemplatedEmail())
         ->from($this->adminEmail)
-            ->to(new Address($student->getEmail()))
+            ->to(new Address($student->getEmail(), 'Ôpe'))
             ->subject('Votre accompagnement est terminé')
             ->htmlTemplate('emails/ended/student.html.twig')
             ->context([
@@ -158,7 +158,7 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         // Send poposal to student
         $email = (new TemplatedEmail())
         ->from($this->adminEmail)
-            ->to(new Address($student->getEmail()))
+            ->to(new Address($student->getEmail(), 'Ôpe'))
             ->subject('Réponse à votre demande de parrainage')
             ->htmlTemplate('emails/non_satisfiable.html.twig')
             ->context([
