@@ -1,8 +1,10 @@
 {% extends "emails/layout.html.twig" %}
+{% import "emails/macros.html.twig" as m %}
 {% block body %}
     <h4>Bonjour {{ sponsor.fullName }}!</h4>
     <p>
         Nous vous informons que le parrainage avec {{ student.fullName }} est terminé.<br />
-        Vous pouvez mettre à jour vos informations ()
+        Vous pouvez mettre à jour vos informations à partir de votre profil.
     </p>
+    <p style="text-align: center;">{{ m.cta(login_link, 'VOTRE PROFIL') }}</p>
 {% endblock body %}

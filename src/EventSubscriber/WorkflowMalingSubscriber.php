@@ -107,6 +107,9 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         $sponsor = $sponsorship->getProposal()->getPerson();
 
         // Send info to sponsor
+        $user = $this->personRepository->findOneBy(['email' => $sponsor->getEmail()]);
+        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
+        $loginLink = $loginLinkDetails->getUrl();
         $email = (new TemplatedEmail())
             ->from($this->adminEmail)
             ->to(new Address($sponsor->getEmail(), 'Ôpe'))
@@ -115,7 +118,8 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
             ->context([
                 'student' => $student,
                 'sponsor' => $sponsor,
-                'sponsorship' => $sponsorship
+                'sponsorship' => $sponsorship,
+                'login_link' => $loginLink
             ])
         ;
         try {
@@ -127,18 +131,23 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
         }
 
         // Send poposal to student
+        $user = $this->personRepository->findOneBy(['email' => $sponsor->getEmail()]);
+        $loginLinkDetails = $this->loginLinkHandler->createLoginLink($user);
+        $loginLink = $loginLinkDetails->getUrl();
         $email = (new TemplatedEmail())
-        ->from($this->adminEmail)
+            ->from($this->adminEmail)
             ->to(new Address($student->getEmail(), 'Ôpe'))
             ->subject('Votre accompagnement est terminé')
             ->htmlTemplate('emails/ended/student.html.twig')
             ->context([
                 'student' => $student,
                 'sponsor' => $sponsor,
-                'sponsorship' => $sponsorship
+                'sponsorship' => $sponsorship,
+                'login_link' => $loginLink
             ])
         ;
         try {
+            $this->mailer->send($email);
             $this->activityLogger->logEmailSuccess($sponsorship, 'toended_student', 'Email fin de parrainage vers l\'étudiant.');
         } catch (TransportExceptionInterface $e) {
             $this->activityLogger->logEmailFailed($sponsorship, 'toended_student', 'Email fin de parrainage vers l\'étudiant. ('.$e->getMessage().')');

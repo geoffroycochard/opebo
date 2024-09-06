@@ -134,8 +134,7 @@ abstract class Person implements UserInterface
         return implode(' ', [
             $this->getCivility()->name,
             $this->getFirstname(),
-            $this->getLastname(),
-            $this->getGender()->name,
+            $this->getLastname()
         ]);
     }
 

@@ -1,4 +1,5 @@
 {% extends "emails/layout.html.twig" %}
+{% import "emails/macros.html.twig" as m %}
 {% block body %}
     <h4>Bonjour {{ student.fullName }}!</h4>
     <p>Faisant suite à votre inscription sur la plateforme de parrainage Ôpe, nous avons le plaisir de
@@ -9,5 +10,6 @@
             <li>→ <a href="mailto:{{ sponsor.email }}">{{ sponsor.email }}</a></li>
         </ul>
         <p><strong>Contacter rapidement votre parrain/marraine.</strong></p>
-    <p><a href="{{ login_link }}" class="btn btn-primary">Voir les informations</a></p>
+        <p style="text-align: center;">{{ m.cta(login_link, 'VOTRE PROFIL') }}</p>
+    
 {% endblock body %}

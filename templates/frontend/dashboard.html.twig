@@ -12,7 +12,7 @@
 			<p class="mb-0 d-block">{{ person.email }}</p>
 		</div>
 		{% if canDelete %}
-			<a href="{{ path('app_frontend_delete') }}" class="btn btn-danger">Supprimer son compte</a>
+			<a href="{{ path('app_frontend_delete') }}" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer votre compte.')">Supprimer son compte</a>
 		{% endif %}
 	</div>
 </div>

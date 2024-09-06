@@ -1,5 +1,6 @@
 {% extends "emails/layout.html.twig" %}
+{% import "emails/macros.html.twig" as m %}
 {% block body %}
     <p>Cliquez sur le bouton en dessous pour confirmer que vous souhaitez vous connecter. Ce lien expirera dans {{ duration }}.</p>
-    <p><a href="{{ login_link }}" class="btn btn-primary">Se connecter</a></p>
+    <p style="text-align: center;">{{ m.cta(login_link, 'SE CONNECTER') }}</p>
 {% endblock body %}

@@ -1,9 +1,10 @@
 {% extends "emails/layout.html.twig" %}
+{% import "emails/macros.html.twig" as m %}
 {% block body %}
     <h4>Bonjour {{ student.fullName }}!</h4>
     <p>
         Nous vous informons que le parrainage avec {{ sponsor.fullName }} est terminé. <br />
-        Suite à cette action, vos informations ont été supprimées de note base de données.<br />
-        Merci de votre confiance.
+        Si vous ne souhaitez pas rester dans notre fichier pour un autre parrainage, nous vous invitons à supprimer votre profil
     </p>
+    <p style="text-align: center;">{{ m.cta(login_link, 'VOTRE PROFIL') }}</p>
 {% endblock body %}

@@ -1,13 +1,17 @@
 {% extends "emails/layout.html.twig" %}
+{% import "emails/macros.html.twig" as m %}
 {% block body %}
     <h4>Bonjour {{ sponsor.fullName }}!</h4>
     <p>Faisant suite à votre inscription sur la plateforme de parrainage Ôpe, nous avons le plaisir de
-        vous transmettre les coordonnées de l’étudiant que nous vous proposons :</p>
-        <ul style="list-style: none; text-align: left">
-            <li>→ {{ student.fullName }}</li>
-            <li>→ <a href="tel:{{ student.phone }}">{{ student.phone }}</a></li>
-            <li>→ <a href="mailto:{{ student.email }}">{{ student.email }}</a></li>
-        </ul>
-        <p>Vous pouvez contacter votre étudiant.</p>
-    <p><a href="{{ login_link }}" class="btn btn-primary">Voir les informations</a></p>
+        vous transmettre les coordonnées de l’étudiant que nous vous proposons de parrainer :</p>
+    <ul style="list-style: none; text-align: left">
+        <li>→ {{ student.fullName }}</li>
+        <li>→ <a href="tel:{{ student.phone }}">{{ student.phone }}</a></li>
+        <li>→ <a href="mailto:{{ student.email }}">{{ student.email }}</a></li>
+    </ul>
+    <p>Vous pouvez contacter votre étudiant.</p>
+    <p>Nous avons communiqué vos coordonnées à cet étudiant que nous vous invitons à contacter.<br /> 
+        En vous remerciant de votre engagement pour la vie étudiante d’Orléans Métropole, </p>
+
+    <p style="text-align: center;">{{ m.cta(login_link, 'VOTRE PROFIL') }}</p>
 {% endblock body %}
