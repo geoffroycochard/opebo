@@ -153,6 +153,23 @@ class WorkflowMalingSubscriber implements EventSubscriberInterface
             $this->activityLogger->logEmailFailed($sponsorship, 'toended_student', 'Email fin de parrainage vers l\'étudiant. ('.$e->getMessage().')');
         }
 
+        // Inform admin
+        $email = (new TemplatedEmail())
+            ->from($this->adminEmail)
+            ->to($this->adminEmail)
+            ->subject('Fin de parrainage')
+            ->htmlTemplate('emails/admin/ended.html.twig')
+            ->context([
+                'sponsorship' => $sponsorship
+            ])
+        ;
+        try {
+            $this->mailer->send($email);
+            $this->activityLogger->logEmailSuccess($sponsorship, 'toended_admin', 'Email fin de parrainage vers l\'administrateur.');
+        } catch (TransportExceptionInterface $e) {
+            $this->activityLogger->logEmailFailed($sponsorship, 'toended_admin', 'Email fin de parrainage vers l\'administrateur. ('.$e->getMessage().')');
+        }
+
     }
 
     /**
