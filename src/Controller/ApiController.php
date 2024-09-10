@@ -278,7 +278,13 @@ class ApiController extends AbstractController
         // Domains
         $domains = explode(',', $register->domains);
         foreach ($domains as $domainId) {
-            $lead->addDomain($domainRepository->find($domainId));
+            if (preg_match('/\|(.*)\|/', $domainId, $m)) {
+                $domain = (new Domain())->setName($m[1]);
+                $entityManager->persist($domain);
+            } else {
+                $domain = $domainRepository->find($domainId);
+            }
+            $lead->addDomain($domain);
         }
 
         // Status
