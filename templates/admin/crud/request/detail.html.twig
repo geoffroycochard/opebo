@@ -23,7 +23,7 @@
 				<td>
 					<ul class="list-unstyled">
 
-						<li>{{ sp.proposal.person.fullname }}</li>
+						<li>{{ person_full_name(sp.proposal.person) }}</li>
 						<li>Objectifs :
 							<ul>
 								{% for o in sp.proposal.objective %}

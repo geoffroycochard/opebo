@@ -8,7 +8,7 @@
 <div class="col-xl-12 col-lg-12 col-md-12 col-12 pb-4">
 	<div class="d-flex align-items-center justify-content-between pt-4 pb-6">
 		<div class="lh-1">
-			<h2 class="mb-0">{{ person.fullName }} <a href="#!" class="text-decoration-none"> </a></h2>
+			<h2 class="mb-0">{{ person_full_name(person) }} <a href="#!" class="text-decoration-none"> </a></h2>
 			<p class="mb-0 d-block">{{ person.email }}</p>
 		</div>
 		{% if canDelete %}

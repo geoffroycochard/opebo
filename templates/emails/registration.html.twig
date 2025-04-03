@@ -1,7 +1,7 @@
 {% extends "emails/layout.html.twig" %}
 {% import "emails/macros.html.twig" as m %}
 {% block body %}
-<h4>Bonjour {{ person.fullName }}!</h4>
+<h4>Bonjour {{ person_full_name(person) }}!</h4>
 <p>
     Nous vous confirmons votre inscription à la plateforme Ôpe.
 </p>

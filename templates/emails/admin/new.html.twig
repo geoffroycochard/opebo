@@ -1,5 +1,5 @@
 {% extends "emails/layout.html.twig" %}
 {% block body %}
     <h4>Bonjour administrateur, </h4>
-    <p>L'étudiant {{ request.person.fullName }} a effectué une nouvelle demande d'accompagnement sur la plateforme Ôpe.</p>
+    <p>L'étudiant {{ person_full_name(request.person) }} a effectué une nouvelle demande d'accompagnement sur la plateforme Ôpe.</p>
 {% endblock body %}
