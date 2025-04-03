@@ -1,12 +1,23 @@
 {% extends "emails/layout.html.twig" %}
 {% import "emails/macros.html.twig" as m %}
 {% block body %}
-    <h4>Bonjour {{ person.fullName }}!</h4>
-    <p>
-        Nous vous confirmons votre inscription à la plateforme Ôpe.
-    </p>
-    <p>
-        Pour vous connecter à la plateforme, accédez au site en cliquant sur le lien ci-dessous et connectez-vous dans « Mon compte »
-    </p>
-    <p style="text-align: center;">{{ m.cta(login_link, 'VOTRE PROFIL') }}</p>
+<h4>Bonjour {{ person.fullName }}!</h4>
+<p>
+    Nous vous confirmons votre inscription à la plateforme Ôpe.
+</p>
+<p>
+    Pour vous connecter à la plateforme, accédez au site en cliquant sur le lien ci-dessous et connectez-vous dans « Mon
+    compte »
+</p>
+<table cellspacing="0" cellpadding="0" border="0" role="presentation" width="300" class="r10-o"
+    style="background-color: #204697; border-collapse: separate; border-color: #204697; border-radius: 4px; border-style: solid; border-width: 0px; table-layout: fixed; width: 300px;">
+    <tr>
+        <td height="18" align="center" valign="top" class="r11-i nl2go-default-textstyle"
+            style="word-break: break-word; background-color: #204697; border-radius: 4px; color: #ffffff; font-family: arial,helvetica,sans-serif; font-size: 16px; font-style: normal; line-height: 1.15; padding-bottom: 12px; padding-top: 12px; text-align: center;">
+            <a href="{{ path('app_frontend_login') }}" class="r12-r default-button" target="_blank" data-btn="1"
+                style="font-style: normal; font-weight: normal; line-height: 1.15; text-decoration: none; word-break: break-word; word-wrap: break-word; display: block; -webkit-text-size-adjust: none; color: #ffffff; font-family: arial,helvetica,sans-serif; font-size: 16px;">
+                <span>VOTRE PROFIL</span></a>
+        </td>
+    </tr>
+</table>
 {% endblock body %}
