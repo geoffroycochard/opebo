@@ -72,6 +72,7 @@ class ReminderCommand extends Command
                $email = (new TemplatedEmail())
                    ->from($this->adminEmail)
                    ->to(new Address($sponsor->getEmail()))
+                   ->cc(new Address($this->adminEmail))
                    ->subject('Suivi de votre parrainage')
                    ->htmlTemplate('emails/reminder/sponsor.html.twig')
                    ->context([
@@ -96,6 +97,7 @@ class ReminderCommand extends Command
                $email = (new TemplatedEmail())
                ->from($this->adminEmail)
                    ->to(new Address($student->getEmail()))
+                   ->cc(new Address($this->adminEmail))
                    ->subject('Suivi de votre accompagnement')
                    ->htmlTemplate('emails/reminder/student.html.twig')
                    ->context([
