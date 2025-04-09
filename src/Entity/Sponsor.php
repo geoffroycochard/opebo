@@ -17,7 +17,7 @@ class Sponsor extends Person
      * the plain-text password is stored on this object.
      * @return void
      */
-    public function eraseCredentials() {
+    public function eraseCredentials(): void {
     }
     
     /**
