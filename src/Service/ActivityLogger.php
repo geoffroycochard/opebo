@@ -3,11 +3,11 @@ declare(strict_types=1);
 
 namespace App\Service;
 use App\Entity\Activity;
-use App\Entity\Sponsorship;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Workflow\Event\Event;
+use Doctrine\Persistence\Mapping\ClassMetadata;
+use Doctrine\Persistence\Proxy;
 
 final class ActivityLogger 
 {
@@ -50,7 +50,7 @@ final class ActivityLogger
     {
         $this->setLog(
             'workflow', 
-            ClassUtils::getClass($event->getSubject()), 
+            $this->getRealClass($event->getSubject()), 
             $event->getSubject()->getId(),
             'Transition',
             sprintf(
@@ -68,7 +68,7 @@ final class ActivityLogger
     {
         $this->setLog(
             'email', 
-            ClassUtils::getClass($object), 
+            $this->getRealClass($object), 
             $object->getId(),
             $title,
             $content,
@@ -80,12 +80,21 @@ final class ActivityLogger
     {
         $this->setLog(
             'email', 
-            ClassUtils::getClass($object), 
+            $this->getRealClass($object), 
             $object->getId(),
             $title,
             $content,
             'error'
         );
+    }
+
+    private function getRealClass($object): string
+    {
+        if ($object instanceof Proxy) {
+            return get_parent_class($object);
+        }
+        
+        return get_class($object);
     }
 }
 

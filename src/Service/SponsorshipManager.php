@@ -50,14 +50,12 @@ final class SponsorshipManager
         $qb
             ->where('s.request = :request')
             ->andWhere('s.proposal != :proposal')
-            ->setParameters([
-                'request' => $request,
-                'proposal' => $proposal,
-            ])
+            ->setParameter('request', $request)
+            ->setParameter('proposal', $proposal)
         ;
         /** @var Sponsorship $sponsorship */
         foreach ($qb->getQuery()->getResult() as $sponsorship) {
-            $this->leadWorkflow->apply($sponsorship->getProposal(), 'to_free');
+            $this->leadWorkflow->apply($sponsorship->getProposal(),  'to_free');
             $this->entityManager->remove($sponsorship);
         }
 

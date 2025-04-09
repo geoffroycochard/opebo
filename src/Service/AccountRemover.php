@@ -9,6 +9,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Workflow\WorkflowInterface;
+use Doctrine\Persistence\Proxy;
 
 final class AccountRemover
 {
@@ -57,7 +58,7 @@ final class AccountRemover
     private function anonymiseActivities($object)
     {
         $activities = $this->activityRepository->findBy([
-            'fqcn' => ClassUtils::getClass($object),
+            'fqcn' => $this->getRealClass($object),
             'entityId' => $object->getId()
         ]);
 
@@ -68,5 +69,13 @@ final class AccountRemover
             $this->entityManager->persist($activitie);
         }
     }
-    
+
+    private function getRealClass($object): string
+    {
+        if ($object instanceof Proxy) {
+            return get_parent_class($object);
+        }
+        
+        return get_class($object);
+    }
 }
