@@ -20,8 +20,11 @@
                         <td>{{ log.title }}</td>
                         <td>{{ log.content }}</td>
                         <td>
-                            {% if log.user %}
-                                {{ log.user.email }} - {{ log.user.role }}
+                            {% if log.user.email is defined %}
+                                {{ log.user.email }}
+                            {% endif %}
+                            {% if log.user.role is defined %}
+                                {{ log.user.role }}
                             {% endif %}
                         </td>
                     </tr>

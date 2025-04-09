@@ -19,7 +19,7 @@
 					{% set url = ea_url()
 						.setController('App\\Controller\\Admin\\StudentCrudController')
 						.setAction('detail')
-						.setEntityId(r.id) %}
+						.setEntityId(r.person.id) %}
 					<a href="{{ url }}" class="btn btn-primary">Voir le profil</a>
 				</div>
 			</div>
@@ -37,7 +37,7 @@
 					{% set url = ea_url()
 						.setController('App\\Controller\\Admin\\SponsorCrudController')
 						.setAction('detail')
-						.setEntityId(r.id) %}
+						.setEntityId(r.person.id) %}
 					<a href="{{ url }}" class="btn btn-primary">Voir le profil</a>
 				</div>
 			</div>
