@@ -80,6 +80,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Establishment', 'fa fa-university', Establishment::class);
         yield MenuItem::linkToCrud('Domain', 'fa fa-lines-leaning', Domain::class);
 
+        yield MenuItem::section('Extraction');
+        yield MenuItem::linkToRoute('Exports', 'fa fa-file-csv', 'admin_export');
+
         
     }
 }
